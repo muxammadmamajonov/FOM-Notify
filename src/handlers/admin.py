@@ -2,7 +2,7 @@ from aiogram import Router
 from aiogram.types import Message
 from aiogram.filters import Command
 from ..config import ADMIN_CHAT_ID, DB_PATH, TARGET_URL
-from ..services import screenshot, subscriptions
+from ..services import reporting, screenshot, subscriptions
 from pathlib import Path
 import datetime
 
@@ -27,12 +27,22 @@ async def run_screenshot(message: Message):
         await message.reply("No subscribers to send to.")
         return
 
-    with open(out, "rb") as f:
-        data = f.read()
-        for chat_id in subs:
-            try:
-                await message.bot.send_photo(chat_id, data)
-            except Exception:
-                pass
+    result = await reporting.send_report(message.bot, subs, out)
+    success_count = len(result["sent_to"])
+    failed_count = len(result["failed"])
 
-    await message.reply("Screenshot sent to subscribers.")
+    if failed_count:
+        failure_lines = "\n".join(
+            f"{item['chat_id']}: {item['error']}" for item in result["failed"][:5]
+        )
+        await message.reply(
+            f"Report delivery finished.\n"
+            f"Sent: {success_count}\n"
+            f"Failed: {failed_count}\n"
+            f"{failure_lines}"
+        )
+        return
+
+    await message.reply(
+        f"Report sent successfully.\nSent: {success_count}\nLink: {result['url'] or 'not set'}"
+    )

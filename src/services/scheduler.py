@@ -1,7 +1,7 @@
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
 from pathlib import Path
-from . import screenshot, subscriptions
+from . import reporting, screenshot, subscriptions
 from ..config import TARGET_URL, DB_PATH, TIMEZONE
 import datetime
 
@@ -23,13 +23,9 @@ async def take_and_send(bot):
         print("No subscribers to send to.")
         return
 
-    with open(out, "rb") as f:
-        data = f.read()
-        for chat_id in subs:
-            try:
-                await bot.send_photo(chat_id, data)
-            except Exception as exc:
-                print(f"Failed to send to {chat_id}: {exc}")
+    result = await reporting.send_report(bot, subs, out)
+    for failure in result["failed"]:
+        print(f"Failed to send to {failure['chat_id']}: {failure['error']}")
 
 def start(bot):
     # schedule daily job at 10:00 Asia/Tashkent

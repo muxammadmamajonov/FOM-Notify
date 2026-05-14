@@ -3,7 +3,7 @@ import logging
 from aiogram import Bot, Dispatcher
 from .handlers.start import router as start_router
 from .handlers.admin import router as admin_router
-from .services import subscriptions, scheduler as scheduler_service
+from .services import reporting, subscriptions, scheduler as scheduler_service
 from .config import TELEGRAM_BOT_TOKEN, DB_PATH, RUN_ONCE, TARGET_URL, INITIAL_SUBSCRIBERS
 
 async def run_once_capture():
@@ -15,6 +15,7 @@ async def run_once_capture():
 
 async def main():
     logging.basicConfig(level=logging.INFO)
+    reporting.sync_web_app_url_env()
 
     # ensure DB
     await subscriptions.init_db(DB_PATH)
