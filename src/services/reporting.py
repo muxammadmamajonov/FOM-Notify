@@ -30,7 +30,7 @@ def get_effective_web_app_url() -> str:
 def sync_web_app_url_env() -> str:
     url = get_effective_web_app_url()
     if not url:
-      return ""
+        return ""
 
     existing = []
     if ENV_FILE.exists():
@@ -57,7 +57,7 @@ def build_report_caption(now: datetime.datetime | None = None) -> str:
         now = datetime.datetime.now(TIMEZONE)
 
     date_text = f"{now.year}-yil {now.day}-{UZBEK_MONTHS[now.month - 1]}"
-    return f"{date_text} holatiga ko‘ra TV yo‘nalishi bo‘yicha savdo natijalari hisoboti."
+    return f"{date_text} holatiga ko'ra TV yo'nalishi bo'yicha savdo natijalari hisoboti."
 
 
 def build_report_markup(url: str) -> InlineKeyboardMarkup | None:

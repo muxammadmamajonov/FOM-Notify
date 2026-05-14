@@ -11,7 +11,7 @@ SCREENSHOT_HEIGHT = 1080
 
 
 async def _find_dashboard_context(page):
-    for _ in range(40):
+    for _ in range(50):
         for frame in page.frames:
             try:
                 has_app = await frame.evaluate(
@@ -27,18 +27,29 @@ async def _find_dashboard_context(page):
             if has_app:
                 return frame
 
-        await page.wait_for_timeout(250)
+        await page.wait_for_timeout(200)
 
     return page.main_frame
 
 
-async def _wait_for_dashboard_render(target):
-    if hasattr(target, "wait_for_load_state"):
-        await target.wait_for_load_state("domcontentloaded")
-        await target.wait_for_load_state("networkidle")
+async def _wait_for_dashboard_render(frame):
+    try:
+        await frame.wait_for_function(
+            """() => {
+                const app = document.querySelector(".app");
+                const cards = document.querySelectorAll(".pod-card");
+                const loader = document.querySelector("#loader");
+                if (!app) return false;
+                if (cards.length > 0) return true;
+                return !loader || loader.offsetParent === null;
+            }""",
+            timeout=45000,
+        )
+    except Exception:
+        pass
 
     try:
-        await target.evaluate(
+        await frame.evaluate(
             """async () => {
                 if (document.fonts && document.fonts.ready) {
                     await document.fonts.ready;
@@ -48,69 +59,51 @@ async def _wait_for_dashboard_render(target):
     except Exception:
         pass
 
+    await frame.evaluate("() => window.scrollTo(0, 0)")
+    await frame.wait_for_timeout(900)
+
+
+async def _fit_dashboard_to_viewport(frame, width: int, height: int):
     try:
-        await target.wait_for_function(
-            """() => {
+        await frame.evaluate(
+            """({ width, height }) => {
                 const app = document.querySelector(".app");
-                const loader = document.querySelector("#loader");
-                const cards = document.querySelectorAll(".pod-card");
-                const status = document.querySelector("#statusText");
+                if (!app) return;
 
-                if (!app) {
-                    return false;
+                app.style.transform = "none";
+                app.style.transformOrigin = "top left";
+                app.style.width = "";
+                app.style.height = "";
+
+                const rect = app.getBoundingClientRect();
+                const appW = Math.max(rect.width, app.scrollWidth);
+                const appH = Math.max(rect.height, app.scrollHeight);
+                if (!appW || !appH) return;
+
+                const ratio = Math.min(width / appW, height / appH, 1);
+                if (ratio < 1) {
+                    app.style.width = appW + "px";
+                    app.style.height = appH + "px";
+                    app.style.transform = "scale(" + ratio + ")";
                 }
 
-                if (cards.length > 0) {
-                    return true;
-                }
-
-                if (status && /загрузка/i.test(status.textContent || "")) {
-                    return false;
-                }
-
-                return !loader || loader.offsetParent === null;
+                document.documentElement.style.overflow = "hidden";
+                document.body.style.overflow = "hidden";
+                window.scrollTo(0, 0);
             }""",
-            timeout=30000,
+            {"width": width, "height": height},
         )
+        await frame.wait_for_timeout(300)
     except Exception:
         pass
 
-    await target.wait_for_timeout(1200)
 
-
-async def _load_dashboard_page(context, url: str):
-    bootstrap_page = await context.new_page()
-    try:
-        await bootstrap_page.set_viewport_size(
-            {"width": SCREENSHOT_WIDTH, "height": SCREENSHOT_HEIGHT}
-        )
-        await bootstrap_page.goto(url, wait_until="networkidle", timeout=60000)
-        frame = await _find_dashboard_context(bootstrap_page)
-
-        if frame != bootstrap_page.main_frame:
-            try:
-                direct_url = await frame.evaluate("() => location.href")
-            except Exception:
-                direct_url = frame.url
-
-            if direct_url:
-                capture_page = await context.new_page()
-                await capture_page.set_viewport_size(
-                    {"width": SCREENSHOT_WIDTH, "height": SCREENSHOT_HEIGHT}
-                )
-                await capture_page.goto(direct_url, wait_until="networkidle", timeout=60000)
-                return bootstrap_page, capture_page
-
-        return None, bootstrap_page
-    except Exception:
-        await bootstrap_page.close()
-        raise
-
-
-async def capture(url: str, out_path: str, width: int = SCREENSHOT_WIDTH, height: int = SCREENSHOT_HEIGHT):
-    """Capture a fixed 1920x1080 dashboard screenshot and save it to `out_path`."""
-    del width, height
-
+async def capture(
+    url: str,
+    out_path: str,
+    width: int = SCREENSHOT_WIDTH,
+    height: int = SCREENSHOT_HEIGHT,
+):
     out = Path(out_path)
     out.parent.mkdir(parents=True, exist_ok=True)
 
@@ -132,7 +125,7 @@ async def capture(url: str, out_path: str, width: int = SCREENSHOT_WIDTH, height
                 context = await p.chromium.launch_persistent_context(
                     PLAYWRIGHT_USER_DATA_DIR,
                     headless=headless_mode,
-                    viewport={"width": SCREENSHOT_WIDTH, "height": SCREENSHOT_HEIGHT},
+                    viewport={"width": width, "height": height},
                     user_agent=desktop_ua,
                     channel="msedge",
                 )
@@ -141,54 +134,51 @@ async def capture(url: str, out_path: str, width: int = SCREENSHOT_WIDTH, height
                     context = await p.chromium.launch_persistent_context(
                         PLAYWRIGHT_USER_DATA_DIR,
                         headless=headless_mode,
-                        viewport={"width": SCREENSHOT_WIDTH, "height": SCREENSHOT_HEIGHT},
+                        viewport={"width": width, "height": height},
                         user_agent=desktop_ua,
                     )
                 except Exception:
                     browser = await p.chromium.launch(headless=HEADLESS)
                     context = await browser.new_context(
-                        viewport={"width": SCREENSHOT_WIDTH, "height": SCREENSHOT_HEIGHT},
+                        viewport={"width": width, "height": height},
                         user_agent=desktop_ua,
                     )
         else:
             browser = await p.chromium.launch(headless=HEADLESS)
             context = await browser.new_context(
-                viewport={"width": SCREENSHOT_WIDTH, "height": SCREENSHOT_HEIGHT},
+                viewport={"width": width, "height": height},
                 user_agent=desktop_ua,
             )
 
-        bootstrap_page = None
-        capture_page = None
-
+        page = None
         try:
             if COOKIES_FILE:
                 cf = Path(COOKIES_FILE)
                 if cf.exists():
                     try:
-                        raw = json.loads(cf.read_text(encoding="utf8"))
+                        raw = json.loads(cf.read_text(encoding="utf-8"))
                         await context.add_cookies(raw)
                     except Exception:
                         pass
 
-            bootstrap_page, capture_page = await _load_dashboard_page(context, url)
-            await _wait_for_dashboard_render(capture_page)
-            await capture_page.set_viewport_size(
-                {"width": SCREENSHOT_WIDTH, "height": SCREENSHOT_HEIGHT}
-            )
-            await capture_page.screenshot(path=str(out))
+            page = await context.new_page()
+            await page.set_viewport_size({"width": width, "height": height})
+            await page.goto(url, wait_until="networkidle", timeout=90000)
+            frame = await _find_dashboard_context(page)
+            await _wait_for_dashboard_render(frame)
+            await _fit_dashboard_to_viewport(frame, width, height)
+            await page.wait_for_timeout(500)
+            await page.screenshot(path=str(out), full_page=False)
         finally:
-            for page in (capture_page, bootstrap_page):
-                if page:
-                    try:
-                        await page.close()
-                    except Exception:
-                        pass
-
+            if page:
+                try:
+                    await page.close()
+                except Exception:
+                    pass
             try:
                 await context.close()
             except Exception:
                 pass
-
             if browser:
                 try:
                     await browser.close()

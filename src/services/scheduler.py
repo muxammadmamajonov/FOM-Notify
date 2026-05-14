@@ -2,7 +2,7 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
 from pathlib import Path
 from . import reporting, screenshot, subscriptions
-from ..config import TARGET_URL, DB_PATH, TIMEZONE
+from ..config import TARGET_URL, DB_PATH, INITIAL_SUBSCRIBERS, TIMEZONE
 import datetime
 
 from apscheduler.jobstores.base import JobLookupError
@@ -19,11 +19,12 @@ async def take_and_send(bot):
         return
 
     subs = await subscriptions.list_subscribers(DB_PATH)
-    if not subs:
+    targets = list(dict.fromkeys(subs + INITIAL_SUBSCRIBERS))
+    if not targets:
         print("No subscribers to send to.")
         return
 
-    result = await reporting.send_report(bot, subs, out)
+    result = await reporting.send_report(bot, targets, out)
     for failure in result["failed"]:
         print(f"Failed to send to {failure['chat_id']}: {failure['error']}")
 
