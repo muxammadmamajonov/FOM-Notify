@@ -2,7 +2,6 @@
 <html lang="ru">
 <head>
   <base target="_top">
-
   <meta charset="UTF-8">
   <meta
     name="viewport"
@@ -10,55 +9,16 @@
   >
   <meta name="theme-color" content="#f5f5f3">
   <meta name="color-scheme" content="light dark">
-
   <title>🏆 ТОП-3 Продажи · ТВ</title>
-
   <style>
     :root{
-      --bg:#282b30;
-      --panel:#2f3238;
-      --panel-2:#373a42;
-      --border:#3d414a;
-      --border-strong:#4a4e58;
-
-      --text:#e8eaef;
-      --text-dim:#c0c4cc;
-      --muted:#8a8e98;
-
-      --accent:#60a5fa;
-      --accent-soft:#373a42;
-
-      --p-ALL:#a78bfa;
-      --p-AA:#f59e0b;
-      --p-FA:#60a5fa;
-      --p-FK:#34d399;
-      --p-FS:#f472b6;
-
-      --gold:#eab308;
-      --silv:#94a3b8;
-      --bron:#c26a3f;
-
-      --ok:#34d399;
-      --warn:#f59e0b;
-      --err:#f87171;
-
-      --shadow:0 12px 40px rgba(0,0,0,.16);
-      --tg-safe-bottom:0px;
-    }
-
-    body.light{
-      --bg:#f5f5f3;
+      --bg:#f3f2ee;
       --panel:#ffffff;
-      --panel-2:#ecebe7;
-      --border:#e0dfda;
-      --border-strong:#cbcac5;
-
-      --text:#1f2228;
-      --text-dim:#3d4249;
-      --muted:#6c7079;
-
+      --panel-2:#ebe8e0;
+      --line:#ddd8ce;
+      --text:#1f232b;
+      --muted:#6f7480;
       --accent:#2563eb;
-      --accent-soft:#e8ebf2;
 
       --p-ALL:#7c3aed;
       --p-AA:#d97706;
@@ -67,14 +27,13 @@
       --p-FS:#db2777;
 
       --gold:#dca300;
-      --silv:#8a97a8;
+      --silv:#94a3b8;
       --bron:#b45a35;
 
       --ok:#059669;
       --warn:#d97706;
       --err:#dc2626;
-
-      --shadow:0 10px 30px rgba(15,23,42,.07);
+      --shadow:0 10px 24px rgba(15,23,42,.06);
     }
 
     *{
@@ -86,67 +45,86 @@
     html,
     body{
       width:100%;
-      min-height:100%;
+      height:100%;
+      overflow:hidden;
       background:var(--bg);
       color:var(--text);
       font-family:Inter,"Segoe UI",Roboto,Arial,sans-serif;
       -webkit-font-smoothing:antialiased;
       text-rendering:optimizeLegibility;
-      overflow-x:hidden;
     }
 
-    body{
-      min-height:100vh;
+    body.dark{
+      --bg:#262a30;
+      --panel:#2f3339;
+      --panel-2:#3a3f47;
+      --line:#464b55;
+      --text:#edf1f6;
+      --muted:#a7afbc;
+      --accent:#60a5fa;
+      --p-AA:#f59e0b;
+      --p-FA:#60a5fa;
+      --p-FK:#34d399;
+      --p-FS:#f472b6;
+      --gold:#eab308;
+      --silv:#94a3b8;
+      --bron:#c26a3f;
+      --ok:#34d399;
+      --warn:#f59e0b;
+      --err:#f87171;
+      --shadow:0 12px 28px rgba(0,0,0,.18);
     }
 
     button{
-      font-family:inherit;
+      font:inherit;
       -webkit-tap-highlight-color:transparent;
     }
 
     .app{
-      width:100%;
-      min-height:100vh;
-      display:flex;
-      flex-direction:column;
+      width:100vw;
+      height:100vh;
+      display:grid;
+      grid-template-rows:84px 1fr 44px;
+      overflow:hidden;
+      background:
+        radial-gradient(circle at top left, rgba(37,99,235,.06), transparent 28%),
+        radial-gradient(circle at top right, rgba(124,58,237,.05), transparent 24%),
+        var(--bg);
     }
 
     .hdr{
-      position:sticky;
-      top:0;
-      z-index:100;
       display:grid;
       grid-template-columns:minmax(260px,auto) 1fr;
-      gap:16px;
+      gap:14px;
       align-items:center;
-      padding:16px 18px;
-      border-bottom:1px solid var(--border);
-      background:rgba(47,50,56,.9);
+      padding:12px 18px;
+      border-bottom:1px solid var(--line);
+      background:rgba(255,255,255,.72);
       backdrop-filter:blur(16px);
     }
 
-    body.light .hdr{
-      background:rgba(255,255,255,.9);
+    body.dark .hdr{
+      background:rgba(38,42,48,.82);
     }
 
     .brand{
       display:flex;
       align-items:center;
-      gap:14px;
+      gap:12px;
       min-width:0;
     }
 
     .logo{
-      width:50px;
-      height:50px;
-      border-radius:16px;
-      background:linear-gradient(135deg,var(--gold),#facc15);
+      width:44px;
+      height:44px;
+      border-radius:14px;
       display:flex;
       align-items:center;
       justify-content:center;
-      font-size:25px;
+      font-size:22px;
+      background:linear-gradient(135deg,#ffd54f,#f4b400);
+      box-shadow:0 10px 24px rgba(234,179,8,.24);
       flex-shrink:0;
-      box-shadow:0 10px 30px rgba(234,179,8,.22);
     }
 
     .brand-text{
@@ -154,9 +132,8 @@
     }
 
     .ttl{
-      font-size:25px;
-      font-weight:850;
-      line-height:1.05;
+      font-size:19px;
+      font-weight:900;
       letter-spacing:-.03em;
       white-space:nowrap;
       overflow:hidden;
@@ -164,21 +141,21 @@
     }
 
     .subttl{
-      margin-top:4px;
+      margin-top:2px;
       color:var(--muted);
-      font-size:13px;
-      font-weight:600;
+      font-size:11px;
+      font-weight:700;
       white-space:nowrap;
       overflow:hidden;
       text-overflow:ellipsis;
     }
 
     .hdr-right{
-      display:flex;
-      align-items:center;
-      justify-content:flex-end;
-      gap:10px;
       min-width:0;
+      display:flex;
+      justify-content:flex-end;
+      align-items:center;
+      gap:8px;
       flex-wrap:wrap;
     }
 
@@ -186,99 +163,82 @@
       display:flex;
       align-items:center;
       gap:4px;
-      background:var(--panel-2);
-      border:1px solid var(--border);
-      border-radius:14px;
       padding:4px;
-      min-width:0;
+      border:1px solid var(--line);
+      border-radius:14px;
+      background:var(--panel-2);
     }
 
     .segmented-label{
-      padding:0 9px;
+      padding:0 8px;
       font-size:10px;
+      color:var(--muted);
       font-weight:800;
       text-transform:uppercase;
       letter-spacing:.08em;
-      color:var(--muted);
-      white-space:nowrap;
+    }
+
+    .segmented-btn,
+    .period-btn,
+    .icon-btn,
+    .pp-reset,
+    .pp-btn{
+      border:0;
+      cursor:pointer;
+      transition:.15s ease;
     }
 
     .segmented-btn{
-      border:0;
+      border-radius:10px;
       background:transparent;
       color:var(--muted);
-      cursor:pointer;
-      border-radius:10px;
-      padding:10px 13px;
-      font-size:13px;
+      padding:8px 12px;
+      font-size:12px;
       font-weight:800;
-      transition:.16s ease;
       white-space:nowrap;
-    }
-
-    .segmented-btn:hover{
-      color:var(--text);
     }
 
     .segmented-btn.active{
       background:var(--accent);
       color:#fff;
-      box-shadow:0 5px 15px rgba(0,0,0,.12);
+      box-shadow:0 8px 20px rgba(37,99,235,.2);
     }
 
-    .period-btn{
+    .period-btn,
+    .status{
+      min-height:38px;
+      border:1px solid var(--line);
+      border-radius:14px;
+      background:var(--panel-2);
+      padding:8px 12px;
+      font-size:12px;
+      font-weight:800;
+      color:var(--text);
       display:flex;
       align-items:center;
-      justify-content:center;
       gap:8px;
-      border:1px solid var(--border);
-      background:var(--panel-2);
-      color:var(--text);
-      border-radius:14px;
-      padding:10px 14px;
-      cursor:pointer;
-      font-size:13px;
-      font-weight:800;
-      min-height:42px;
-      transition:.16s ease;
       white-space:nowrap;
     }
 
-    .period-btn:hover{
-      border-color:var(--accent);
-    }
-
     .period-btn.active{
-      border-color:var(--accent);
       color:var(--accent);
+      border-color:var(--accent);
     }
 
     .period-icon{
-      width:17px;
-      height:17px;
+      width:16px;
+      height:16px;
       stroke-width:2;
       flex-shrink:0;
     }
 
     .status{
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      gap:8px;
-      border:1px solid var(--border);
-      background:var(--panel-2);
-      border-radius:14px;
-      padding:10px 13px;
-      font-size:12px;
       color:var(--muted);
-      font-weight:750;
-      min-height:42px;
-      white-space:nowrap;
     }
 
     .dot{
-      width:10px;
-      height:10px;
+      width:9px;
+      height:9px;
       border-radius:50%;
       flex-shrink:0;
     }
@@ -295,32 +255,29 @@
     .icon-actions{
       display:flex;
       gap:8px;
-      align-items:center;
     }
 
     .icon-btn{
-      width:42px;
-      height:42px;
-      border-radius:14px;
-      border:1px solid var(--border);
+      width:38px;
+      height:38px;
+      border-radius:12px;
+      border:1px solid var(--line);
       background:var(--panel-2);
       color:var(--muted);
-      cursor:pointer;
-      transition:.16s ease;
-      font-size:17px;
-      flex-shrink:0;
+      font-size:15px;
     }
 
-    .icon-btn:hover{
+    .icon-btn:hover,
+    .period-btn:hover{
       border-color:var(--accent);
       color:var(--accent);
     }
 
     .autoplay-bar{
-      height:4px;
+      display:none;
+      height:3px;
       background:var(--panel-2);
       overflow:hidden;
-      display:none;
     }
 
     .autoplay-bar.on{
@@ -335,85 +292,90 @@
     }
 
     .stage{
-      flex:1;
-      padding:18px;
+      min-height:0;
+      padding:12px 14px 10px;
+      overflow:hidden;
     }
 
     .grid5{
+      height:100%;
       display:grid;
-      grid-template-columns:repeat(2,minmax(0,1fr));
-      gap:18px;
-      align-items:start;
-    }
-
-    .grid5 > .pod-card.total{
-      grid-column:1/-1;
-    }
-
-    .solo{
-      min-height:calc(100vh - 180px);
-      display:flex;
+      grid-template-columns:repeat(4, minmax(0, 1fr));
+      grid-template-rows:minmax(0, 1.08fr) minmax(0, .92fr);
+      gap:12px;
       align-items:stretch;
     }
 
+    .grid5 > .pod-card.total{
+      grid-column:1 / -1;
+    }
+
+    .solo{
+      height:100%;
+    }
+
     .solo .pod-card{
-      width:100%;
+      height:100%;
     }
 
     .pod-card{
-      background:var(--panel);
-      border:1px solid var(--border);
-      border-radius:24px;
-      padding:20px;
-      position:relative;
-      overflow:hidden;
-      box-shadow:var(--shadow);
+      min-height:0;
       display:flex;
       flex-direction:column;
+      padding:14px 16px 12px;
+      border:1px solid var(--line);
+      border-radius:20px;
+      background:var(--panel);
+      box-shadow:var(--shadow);
+      position:relative;
+      overflow:hidden;
     }
 
     .pod-card::before{
       content:"";
       position:absolute;
-      left:0;
       top:0;
+      left:0;
       width:100%;
-      height:5px;
-      background:var(--prod-color,var(--accent));
+      height:4px;
+      background:var(--prod-color, var(--accent));
     }
 
     .pod-head{
       display:flex;
-      justify-content:space-between;
       align-items:flex-start;
-      gap:16px;
-      margin-bottom:22px;
+      justify-content:space-between;
+      gap:12px;
+      margin-bottom:10px;
     }
 
     .pod-title{
       display:flex;
       align-items:center;
-      gap:12px;
+      gap:10px;
       min-width:0;
     }
 
     .pod-badge{
-      padding:8px 12px;
-      border-radius:12px;
-      border:2px solid var(--prod-color,var(--accent));
-      color:var(--prod-color,var(--accent));
-      font-size:13px;
-      font-weight:850;
+      padding:6px 10px;
+      border-radius:11px;
+      border:2px solid var(--prod-color, var(--accent));
+      color:var(--prod-color, var(--accent));
+      font-size:12px;
+      font-weight:900;
       letter-spacing:.08em;
       flex-shrink:0;
     }
 
     .pod-name{
-      font-size:24px;
-      font-weight:850;
-      letter-spacing:-.025em;
-      line-height:1.05;
       min-width:0;
+      font-size:17px;
+      font-weight:900;
+      letter-spacing:-.03em;
+      line-height:1.05;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
     }
 
     .pod-sum{
@@ -422,196 +384,176 @@
     }
 
     .pod-sum-lbl{
-      font-size:11px;
+      font-size:10px;
       font-weight:800;
-      letter-spacing:.08em;
       color:var(--muted);
+      letter-spacing:.08em;
       text-transform:uppercase;
     }
 
     .pod-sum-val{
-      margin-top:4px;
-      font-size:34px;
-      font-weight:850;
-      line-height:1;
-      color:var(--prod-color,var(--accent));
+      margin-top:2px;
+      color:var(--prod-color, var(--accent));
+      font-size:18px;
+      font-weight:900;
       font-variant-numeric:tabular-nums;
     }
 
+    .pod-card.total .pod-name{
+      font-size:18px;
+    }
+
+    .pod-card.total .pod-sum-val{
+      font-size:20px;
+    }
+
     .podium{
-      display:grid;
-      grid-template-columns:1fr 1.15fr 1fr;
-      align-items:end;
-      gap:12px;
       flex:1;
+      min-height:0;
+      display:grid;
+      grid-template-columns:repeat(3, minmax(0, 1fr));
+      gap:8px;
+      align-items:end;
     }
 
     .place{
+      min-height:0;
       display:flex;
       flex-direction:column;
+      justify-content:flex-end;
       align-items:center;
       text-align:center;
-      min-width:0;
-      min-height:100%;
     }
 
     .place-stack{
       width:100%;
+      min-height:0;
+      max-height:78px;
+      margin-bottom:8px;
       display:flex;
       flex-direction:column;
       justify-content:flex-end;
-      gap:10px;
-      margin-bottom:10px;
-      min-height:180px;
+      gap:7px;
+      overflow:hidden;
+    }
+
+    .pod-card.total .place-stack{
+      max-height:96px;
     }
 
     .tie-entry{
       width:100%;
+      min-width:0;
       display:flex;
       flex-direction:column;
+      gap:1px;
       align-items:center;
-      gap:4px;
-      padding:0 4px;
     }
 
-    .tie-entry + .tie-entry{
-      padding-top:10px;
-      border-top:1px dashed var(--border);
+    .tie-name,
+    .tie-loc{
+      width:100%;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap;
     }
 
     .tie-name{
-      width:100%;
-      font-size:clamp(14px,1vw + 9px,18px);
-      font-weight:800;
-      line-height:1.18;
-      overflow-wrap:anywhere;
+      font-size:13px;
+      font-weight:850;
+      line-height:1.08;
+    }
+
+    .pod-card.total .tie-name{
+      font-size:14px;
     }
 
     .tie-loc{
-      width:100%;
-      font-size:clamp(10px,.35vw + 9px,12px);
       color:var(--muted);
+      font-size:10px;
+      font-weight:700;
       text-transform:uppercase;
-      letter-spacing:.06em;
-      overflow-wrap:anywhere;
+      letter-spacing:.04em;
+    }
+
+    .tie-more{
+      font-size:18px;
+      line-height:1;
+      color:var(--muted);
+      font-weight:900;
     }
 
     .place-val{
-      font-size:38px;
-      font-weight:850;
+      margin-bottom:8px;
+      font-size:28px;
+      font-weight:900;
       line-height:1;
-      margin-bottom:10px;
       font-variant-numeric:tabular-nums;
     }
 
     .place-val .u{
-      font-size:.45em;
+      margin-left:2px;
+      font-size:.42em;
       color:var(--muted);
-      margin-left:3px;
-      font-weight:700;
+      font-weight:800;
+    }
+
+    .pod-card.total .place-val{
+      font-size:30px;
     }
 
     .pedestal{
       width:100%;
-      border-radius:18px 18px 6px 6px;
       display:flex;
       align-items:center;
       justify-content:center;
+      border-radius:16px 16px 6px 6px;
     }
 
     .rank-num{
-      font-size:40px;
+      font-size:32px;
       font-weight:950;
-      color:rgba(255,255,255,.92);
+      color:rgba(255,255,255,.94);
     }
 
-    .p1 .pedestal{height:120px;background:var(--gold);}
-    .p2 .pedestal{height:92px;background:var(--silv);}
-    .p3 .pedestal{height:74px;background:var(--bron);}
-
+    .p1 .pedestal{height:88px;background:var(--gold);}
+    .p2 .pedestal{height:66px;background:var(--silv);}
+    .p3 .pedestal{height:54px;background:var(--bron);}
     .p1 .place-val{color:var(--gold);}
     .p2 .place-val{color:var(--silv);}
     .p3 .place-val{color:var(--bron);}
-
-    .empty-place{
-      opacity:.58;
-    }
-
-    .empty-place .place-stack{
-      justify-content:center;
-    }
-
-    .ticker{
-      margin-top:auto;
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:12px;
-      padding:16px 18px calc(16px + var(--tg-safe-bottom)) 18px;
-      border-top:1px solid var(--border);
-      background:var(--panel);
-      flex-wrap:wrap;
-    }
-
-    .ticker-left{
-      display:flex;
-      align-items:center;
-      gap:18px;
-      flex-wrap:wrap;
-    }
-
-    .period-tag{
-      display:flex;
-      align-items:center;
-      gap:8px;
-      font-size:12px;
-      font-weight:850;
-      text-transform:uppercase;
-      letter-spacing:.08em;
-      color:var(--muted);
-    }
-
-    .period-tag::before{
-      content:"●";
-      color:var(--accent);
-    }
-
-    .big{
-      font-weight:850;
-      color:var(--text);
-      font-variant-numeric:tabular-nums;
-    }
+    .empty-place{opacity:.58;}
 
     .nodata{
-      min-height:60vh;
+      height:100%;
       display:flex;
       align-items:center;
       justify-content:center;
-      padding:20px;
+      padding:10px;
     }
 
     .loader-card{
-      text-align:center;
+      width:min(100%, 520px);
+      padding:28px 24px;
+      border-radius:22px;
+      border:1px solid var(--line);
       background:var(--panel);
-      border:1px solid var(--border);
-      border-radius:24px;
-      padding:40px 28px;
-      width:min(100%,520px);
       box-shadow:var(--shadow);
+      text-align:center;
     }
 
     .loader-spinner{
-      width:58px;
-      height:58px;
-      margin:0 auto 18px;
+      width:50px;
+      height:50px;
+      margin:0 auto 14px;
       border-radius:50%;
-      border:4px solid rgba(255,255,255,.08);
+      border:4px solid rgba(0,0,0,.08);
       border-top-color:var(--accent);
       animation:spin .9s linear infinite;
     }
 
-    body.light .loader-spinner{
-      border-color:rgba(0,0,0,.06);
+    body.dark .loader-spinner{
+      border-color:rgba(255,255,255,.08);
       border-top-color:var(--accent);
     }
 
@@ -620,16 +562,15 @@
     }
 
     .loader-title{
-      font-size:20px;
-      font-weight:850;
-      margin-bottom:8px;
+      font-size:18px;
+      font-weight:900;
+      margin-bottom:6px;
     }
 
     .loader-text{
       color:var(--muted);
-      font-size:14px;
-      line-height:1.5;
-      overflow-wrap:anywhere;
+      font-size:13px;
+      line-height:1.45;
     }
 
     .period-popup{
@@ -639,59 +580,59 @@
     .period-popup.open{
       display:block;
       position:fixed;
-      z-index:9999;
-      top:88px;
-      right:18px;
-      width:min(480px,calc(100vw - 20px));
+      right:14px;
+      top:74px;
+      z-index:200;
+      width:420px;
+      max-width:calc(100vw - 28px);
+      padding:16px;
+      border:1px solid var(--line);
+      border-radius:22px;
       background:var(--panel);
-      border:1px solid var(--border);
-      border-radius:24px;
-      box-shadow:0 30px 80px rgba(0,0,0,.26);
-      padding:18px;
+      box-shadow:0 24px 64px rgba(0,0,0,.18);
     }
 
     .pp-head{
       display:flex;
       justify-content:space-between;
-      align-items:flex-start;
-      gap:12px;
-      margin-bottom:18px;
+      gap:10px;
+      margin-bottom:14px;
     }
 
     .pp-title{
-      font-size:18px;
-      font-weight:850;
+      font-size:16px;
+      font-weight:900;
     }
 
     .pp-hint{
       margin-top:4px;
-      font-size:13px;
       color:var(--muted);
+      font-size:12px;
     }
 
-    .pp-reset{
-      border:1px solid var(--border);
-      background:transparent;
-      color:var(--muted);
+    .pp-reset,
+    .pp-btn{
+      padding:10px 12px;
       border-radius:12px;
-      padding:10px 14px;
-      cursor:pointer;
+      border:1px solid var(--line);
+      background:transparent;
+      color:var(--text);
+      font-size:13px;
       font-weight:800;
     }
 
     .pp-years{
+      max-height:42vh;
+      overflow:auto;
       display:flex;
       flex-direction:column;
-      gap:18px;
-      max-height:50vh;
-      overflow:auto;
-      padding-right:2px;
+      gap:14px;
     }
 
     .pp-yhead{
-      margin-bottom:10px;
-      font-size:15px;
-      font-weight:850;
+      margin-bottom:8px;
+      font-size:14px;
+      font-weight:900;
       cursor:pointer;
     }
 
@@ -703,18 +644,13 @@
 
     .pp-mbtn{
       border:0;
+      border-radius:12px;
       background:var(--panel-2);
       color:var(--text);
-      border-radius:12px;
-      padding:12px;
-      cursor:pointer;
-      font-size:13px;
+      padding:11px 8px;
+      font-size:12px;
       font-weight:800;
-      transition:.16s ease;
-    }
-
-    .pp-mbtn:hover:not(:disabled){
-      background:var(--accent-soft);
+      cursor:pointer;
     }
 
     .pp-mbtn:disabled{
@@ -724,7 +660,7 @@
     }
 
     .pp-mbtn.insel{
-      background:var(--accent-soft);
+      background:rgba(37,99,235,.12);
     }
 
     .pp-mbtn.edge{
@@ -735,310 +671,133 @@
     .pp-foot{
       display:flex;
       justify-content:flex-end;
-      gap:10px;
-      margin-top:18px;
-    }
-
-    .pp-btn{
-      border:1px solid var(--border);
-      background:transparent;
-      color:var(--text);
-      border-radius:14px;
-      padding:12px 16px;
-      cursor:pointer;
-      font-size:14px;
-      font-weight:800;
+      gap:8px;
+      margin-top:14px;
     }
 
     .pp-btn.primary{
       background:var(--accent);
-      color:#fff;
       border-color:var(--accent);
+      color:#fff;
     }
 
-    @media (min-width:1400px){
-      .grid5{
-        grid-template-columns:repeat(2,minmax(0,1fr));
-      }
-
-      .pod-card.total .pod-name{
-        font-size:28px;
-      }
+    .ticker{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      padding:0 16px;
+      border-top:1px solid var(--line);
+      background:rgba(255,255,255,.65);
+      font-size:12px;
     }
 
-    @media (max-width:1180px){
+    body.dark .ticker{
+      background:rgba(38,42,48,.74);
+    }
+
+    .ticker-left{
+      display:flex;
+      align-items:center;
+      gap:14px;
+      min-width:0;
+      flex-wrap:wrap;
+    }
+
+    .period-tag{
+      display:flex;
+      align-items:center;
+      gap:7px;
+      color:var(--muted);
+      font-size:11px;
+      font-weight:900;
+      text-transform:uppercase;
+      letter-spacing:.08em;
+    }
+
+    .period-tag::before{
+      content:"●";
+      color:var(--accent);
+    }
+
+    .big{
+      font-size:13px;
+      font-weight:900;
+      color:var(--text);
+      font-variant-numeric:tabular-nums;
+    }
+
+    .ticker-right{
+      color:var(--muted);
+      white-space:nowrap;
+    }
+
+    @media (max-width: 1400px){
+      .app{
+        grid-template-rows:120px 1fr 54px;
+      }
+
       .hdr{
         grid-template-columns:1fr;
-        align-items:start;
       }
 
       .hdr-right{
         justify-content:flex-start;
-        width:100%;
-      }
-
-      .segmented-label{
-        display:none;
       }
 
       .grid5{
-        grid-template-columns:1fr;
+        grid-template-columns:repeat(2, minmax(0, 1fr));
+        grid-template-rows:repeat(3, minmax(0, 1fr));
       }
 
       .grid5 > .pod-card.total{
-        grid-column:auto;
+        grid-column:1 / -1;
       }
     }
 
-    @media (max-width:820px){
-      .hdr{
-        padding:14px;
-        gap:12px;
+    @media (max-width: 820px){
+      html,
+      body{
+        overflow:auto;
       }
 
-      .logo{
-        width:46px;
-        height:46px;
-        border-radius:14px;
-        font-size:22px;
-      }
-
-      .ttl{
-        font-size:22px;
-      }
-
-      .subttl{
-        font-size:12px;
-      }
-
-      .hdr-right{
-        display:grid;
-        grid-template-columns:1fr 1fr;
-        gap:9px;
-      }
-
-      .segmented{
-        width:100%;
-        display:grid;
-        grid-template-columns:repeat(3,1fr);
-      }
-
-      .segmented[data-control="mode"]{
-        grid-template-columns:repeat(2,1fr);
-      }
-
-      .segmented-btn{
-        text-align:center;
-        padding:10px 8px;
-        font-size:13px;
-      }
-
-      .period-btn,
-      .status{
-        width:100%;
-      }
-
-      .icon-actions{
-        display:grid;
-        grid-template-columns:repeat(3,1fr);
-        grid-column:1/-1;
-        width:100%;
-      }
-
-      .icon-btn{
-        width:100%;
+      .app{
+        height:auto;
+        min-height:100vh;
+        grid-template-rows:auto auto auto;
       }
 
       .stage{
-        padding:12px;
+        overflow:visible;
       }
 
-      .pod-card{
-        border-radius:20px;
-        padding:16px;
+      .grid5,
+      .solo{
+        height:auto;
       }
 
-      .pod-head{
-        margin-bottom:16px;
+      .grid5{
+        display:grid;
+        grid-template-columns:1fr;
+        grid-template-rows:none;
       }
 
-      .pod-name{
-        font-size:20px;
-      }
-
-      .pod-sum-val{
-        font-size:28px;
+      .place-stack{
+        max-height:none;
       }
 
       .podium{
         grid-template-columns:1fr;
-        gap:0;
-      }
-
-      .place{
-        display:grid;
-        grid-template-columns:minmax(0,1fr) 74px;
-        grid-template-areas:
-          "stack ped"
-          "val ped";
-        align-items:center;
-        text-align:left;
-        gap:8px 14px;
-        padding:12px 0;
-        border-bottom:1px solid var(--border);
-        min-height:0;
-      }
-
-      .place:last-child{
-        border-bottom:0;
-      }
-
-      .place-stack{
-        grid-area:stack;
-        min-height:0;
-        margin-bottom:0;
-        align-items:flex-start;
-      }
-
-      .tie-entry{
-        align-items:flex-start;
-        padding:0;
-      }
-
-      .tie-name{
-        font-size:15px;
-      }
-
-      .tie-loc{
-        font-size:11px;
-      }
-
-      .place-val{
-        grid-area:val;
-        margin:2px 0 0;
-        font-size:28px;
-      }
-
-      .pedestal{
-        grid-area:ped;
-        height:78px !important;
-        border-radius:16px;
-      }
-
-      .rank-num{
-        font-size:32px;
       }
 
       .ticker{
-        padding:14px 14px calc(14px + var(--tg-safe-bottom)) 14px;
-      }
-
-      .ticker-left{
-        gap:10px 14px;
-      }
-
-      .period-popup.open{
-        top:120px;
-        left:10px;
-        right:10px;
-        width:auto;
-      }
-    }
-
-    @media (max-width:520px){
-      .hdr-right{
-        grid-template-columns:1fr;
-      }
-
-      .brand{
-        gap:11px;
-      }
-
-      .logo{
-        width:42px;
-        height:42px;
-      }
-
-      .ttl{
-        font-size:20px;
-      }
-
-      .subttl{
-        display:none;
-      }
-
-      .pod-head{
-        display:grid;
-        grid-template-columns:1fr auto;
-        align-items:start;
-        gap:12px;
-      }
-
-      .pod-title{
-        align-items:flex-start;
-      }
-
-      .pod-badge{
-        padding:7px 9px;
-        font-size:12px;
-        border-radius:10px;
-      }
-
-      .pod-name{
-        font-size:18px;
-      }
-
-      .pod-sum{
-        text-align:right;
-      }
-
-      .pod-sum-val{
-        font-size:24px;
-      }
-
-      .place{
-        grid-template-columns:minmax(0,1fr) 64px;
-        gap:6px 12px;
-        padding:11px 0;
-      }
-
-      .tie-name{
-        font-size:14px;
-      }
-
-      .place-val{
-        font-size:25px;
-      }
-
-      .pedestal{
-        height:68px !important;
-      }
-
-      .rank-num{
-        font-size:28px;
-      }
-
-      .ticker,
-      .ticker-left{
+        padding:12px 14px;
         flex-direction:column;
         align-items:flex-start;
-      }
-
-      .loader-card{
-        padding:30px 18px;
-      }
-
-      .period-popup.open{
-        top:96px;
-      }
-
-      .pp-mbtn{
-        padding:11px 8px;
       }
     }
   </style>
 </head>
-
 <body>
   <div class="app">
     <header class="hdr">
@@ -1046,7 +805,7 @@
         <div class="logo">🏆</div>
         <div class="brand-text">
           <h1 class="ttl">ТОП-3 Продажи</h1>
-          <div class="subttl">Dashboard · Production Edition</div>
+          <div class="subttl">Dashboard · 1920×1080</div>
         </div>
       </div>
 
@@ -1081,7 +840,7 @@
         </div>
 
         <div class="icon-actions">
-          <button class="icon-btn" id="themeBtn" type="button" title="Тема">🌙</button>
+          <button class="icon-btn" id="themeBtn" type="button" title="Тема">☀</button>
           <button class="icon-btn" id="refreshBtn" type="button" title="Обновить">↻</button>
           <button class="icon-btn" id="fullscreenBtn" type="button" title="На весь экран">⛶</button>
         </div>
@@ -1132,7 +891,6 @@
   </div>
 
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-
   <script>
     (() => {
       const tg = window.Telegram?.WebApp;
@@ -1140,19 +898,9 @@
       if (tg) {
         tg.ready();
 
-        try { tg.expand(); } catch (e) {}
-        try { tg.requestFullscreen?.(); } catch (e) {}
-
-        if (tg.colorScheme === "light") {
-          document.body.classList.add("light");
+        if (tg.colorScheme === "dark") {
+          document.body.classList.add("dark");
         }
-
-        document.documentElement.style.setProperty(
-          "--tg-safe-bottom",
-          (tg.safeAreaInset?.bottom || 0) + "px"
-        );
-      } else {
-        document.body.classList.add("light");
       }
     })();
   </script>
@@ -1160,23 +908,21 @@
   <script>
     const PRODUCTS = ["AA", "FA", "FK", "FS"];
     const DISPLAY_ORDER = ["ALL", ...PRODUCTS];
-
-    const AUTO_REFRESH_MS = 30 * 60 * 1000;
-    const SOLO_INTERVAL_MS = 8000;
-
-    const MONTH_SHORT = ["Янв","Фев","Мар","Апр","Май","Июн","Июл","Авг","Сен","Окт","Ноя","Дек"];
-    const MONTH_LONG = [
-      "Январь","Февраль","Март","Апрель","Май","Июнь",
-      "Июль","Август","Сентябрь","Октябрь","Ноябрь","Декабрь"
-    ];
-
     const PRODUCT_TITLES = {
-      ALL: "ОБЩИЕ ПРОДАЖИ",
+      ALL: "Общие продажи",
       AA: "Продукт AA",
       FA: "Продукт FA",
       FK: "Продукт FK",
       FS: "Продукт FS",
     };
+    const MONTH_SHORT = ["Янв","Фев","Мар","Апр","Май","Июн","Июл","Авг","Сен","Окт","Ноя","Дек"];
+    const MONTH_LONG = [
+      "Январь","Февраль","Март","Апрель","Май","Июнь",
+      "Июль","Август","Сентябрь","Октябрь","Ноябрь","Декабрь"
+    ];
+    const AUTO_REFRESH_MS = 30 * 60 * 1000;
+    const SOLO_INTERVAL_MS = 8000;
+    const MAX_VISIBLE_TIES = 2;
 
     const state = {
       rawData: null,
@@ -1203,13 +949,13 @@
     }
 
     function escapeHtml(value) {
-      return String(value ?? "").replace(/[&<>\"']/g, c => ({
+      return String(value ?? "").replace(/[&<>\"']/g, char => ({
         "&":"&amp;",
         "<":"&lt;",
         ">":"&gt;",
         "\"":"&quot;",
-        "'":"&#39;"
-      }[c]));
+        "'":"&#39;",
+      }[char]));
     }
 
     function callServer(functionName, ...args) {
@@ -1226,8 +972,8 @@
       });
     }
 
-    function monthAbs(p) {
-      return p.y * 12 + p.m;
+    function monthAbs(point) {
+      return point.y * 12 + point.m;
     }
 
     function formatPeriodLabel(period) {
@@ -1241,8 +987,11 @@
         return MONTH_SHORT[period.start.m] + "–" + MONTH_SHORT[period.end.m] + " " + period.start.y;
       }
 
-      return MONTH_SHORT[period.start.m] + " " + period.start.y + " — " +
-             MONTH_SHORT[period.end.m] + " " + period.end.y;
+      return (
+        MONTH_SHORT[period.start.m] + " " + period.start.y +
+        " — " +
+        MONTH_SHORT[period.end.m] + " " + period.end.y
+      );
     }
 
     function setPeriodPreset(preset) {
@@ -1256,32 +1005,19 @@
       }
 
       if (preset === "month") {
-        state.period = {
-          kind: "month",
-          start: { y, m },
-          end: { y, m },
-        };
+        state.period = { kind: "month", start: { y, m }, end: { y, m } };
       }
 
       if (preset === "quarter") {
         const qStart = Math.floor(m / 3) * 3;
-        state.period = {
-          kind: "quarter",
-          start: { y, m: qStart },
-          end: { y, m: qStart + 2 },
-        };
+        state.period = { kind: "quarter", start: { y, m: qStart }, end: { y, m: qStart + 2 } };
       }
 
       if (preset === "year") {
-        state.period = {
-          kind: "year",
-          start: { y, m: 0 },
-          end: { y, m: 11 },
-        };
+        state.period = { kind: "year", start: { y, m: 0 }, end: { y, m: 11 } };
       }
 
       state.preset = preset;
-
       document.querySelectorAll("[data-period]").forEach(btn => {
         btn.classList.toggle("active", btn.dataset.period === preset);
       });
@@ -1299,7 +1035,6 @@
 
     function forEachPeriodMonth(callback) {
       if (!state.period) return;
-
       const from = monthAbs(state.period.start);
       const to = monthAbs(state.period.end);
 
@@ -1323,8 +1058,8 @@
           let add = 0;
 
           if (product === "ALL") {
-            PRODUCTS.forEach(p => {
-              add += emp.prod_f?.[p]?.[m] || 0;
+            PRODUCTS.forEach(code => {
+              add += emp.prod_f?.[code]?.[m] || 0;
             });
           } else {
             add += emp.prod_f?.[product]?.[m] || 0;
@@ -1357,12 +1092,7 @@
           const rank = result.length + 1;
           if (rank > 3) break;
 
-          result.push({
-            rank,
-            value: row.value,
-            entries: [row],
-          });
-
+          result.push({ rank, value: row.value, entries: [row] });
           lastValue = row.value;
         } else if (result.length) {
           result[result.length - 1].entries.push(row);
@@ -1370,11 +1100,7 @@
       }
 
       while (result.length < 3) {
-        result.push({
-          rank: result.length + 1,
-          value: 0,
-          entries: [],
-        });
+        result.push({ rank: result.length + 1, value: 0, entries: [] });
       }
 
       return result.slice(0, 3);
@@ -1388,46 +1114,15 @@
       if (city) parts.push(city);
       if (region && region !== city) parts.push(region);
 
-      return parts.length ? parts.join(" / ") : "—";
+      return parts.length ? parts.join(" · ") : "—";
     }
 
     function buildEntry(entry) {
-      const name = escapeHtml(entry.name || "—");
-      const location = escapeHtml(formatLocation(entry));
-
       return `
         <div class="tie-entry">
-          <div class="tie-name">${name}</div>
-          <div class="tie-loc">${location}</div>
+          <div class="tie-name" title="${escapeHtml(entry.name)}">${escapeHtml(entry.name)}</div>
+          <div class="tie-loc" title="${escapeHtml(formatLocation(entry))}">${escapeHtml(formatLocation(entry))}</div>
         </div>
-      `;
-    }
-
-    function buildCard(product) {
-      const ranking = getRanking(product);
-      const top3 = getTop3(ranking);
-      const total = ranking.reduce((sum, row) => sum + row.value, 0);
-
-      const places = [top3[1], top3[0], top3[2]];
-
-      return `
-        <section class="pod-card ${product === "ALL" ? "total" : ""}" style="--prod-color:var(--p-${product})">
-          <div class="pod-head">
-            <div class="pod-title">
-              <div class="pod-badge">${product}</div>
-              <div class="pod-name">${escapeHtml(PRODUCT_TITLES[product] || product)}</div>
-            </div>
-
-            <div class="pod-sum">
-              <div class="pod-sum-lbl">ВСЕГО</div>
-              <div class="pod-sum-val">${total}</div>
-            </div>
-          </div>
-
-          <div class="podium">
-            ${places.map(place => buildPlace(place)).join("")}
-          </div>
-        </section>
       `;
     }
 
@@ -1449,14 +1144,44 @@
         `;
       }
 
+      const visibleEntries = place.entries.slice(0, MAX_VISIBLE_TIES);
+      const hasMore = place.entries.length > MAX_VISIBLE_TIES;
+
       return `
         <div class="place p${place.rank}">
           <div class="place-stack">
-            ${place.entries.map(buildEntry).join("")}
+            ${visibleEntries.map(buildEntry).join("")}
+            ${hasMore ? '<div class="tie-more">...</div>' : ""}
           </div>
           <div class="place-val">${place.value}<span class="u">шт</span></div>
           <div class="pedestal"><div class="rank-num">${place.rank}</div></div>
         </div>
+      `;
+    }
+
+    function buildCard(product) {
+      const ranking = getRanking(product);
+      const top3 = getTop3(ranking);
+      const total = ranking.reduce((sum, row) => sum + row.value, 0);
+      const places = [top3[1], top3[0], top3[2]];
+
+      return `
+        <section class="pod-card ${product === "ALL" ? "total" : ""}" style="--prod-color:var(--p-${product})">
+          <div class="pod-head">
+            <div class="pod-title">
+              <div class="pod-badge">${product}</div>
+              <div class="pod-name">${escapeHtml(PRODUCT_TITLES[product] || product)}</div>
+            </div>
+            <div class="pod-sum">
+              <div class="pod-sum-lbl">Всего</div>
+              <div class="pod-sum-val">${total}</div>
+            </div>
+          </div>
+
+          <div class="podium">
+            ${places.map(buildPlace).join("")}
+          </div>
+        </section>
       `;
     }
 
@@ -1476,23 +1201,13 @@
       if (state.mode === "solo") {
         $("autoBar").classList.add("on");
         const product = DISPLAY_ORDER[state.soloIdx] || DISPLAY_ORDER[0];
-
-        $("stage").innerHTML = `
-          <div class="solo">
-            ${buildCard(product)}
-          </div>
-        `;
-
+        $("stage").innerHTML = `<div class="solo">${buildCard(product)}</div>`;
         startSoloTimer();
         return;
       }
 
       $("autoBar").classList.remove("on");
-      $("stage").innerHTML = `
-        <div class="grid5">
-          ${DISPLAY_ORDER.map(buildCard).join("")}
-        </div>
-      `;
+      $("stage").innerHTML = `<div class="grid5">${DISPLAY_ORDER.map(buildCard).join("")}</div>`;
     }
 
     function showError(error) {
@@ -1501,7 +1216,7 @@
       $("stage").innerHTML = `
         <div class="nodata">
           <div class="loader-card">
-            <div style="font-size:44px;margin-bottom:14px">⚠️</div>
+            <div style="font-size:40px;margin-bottom:12px">⚠️</div>
             <div class="loader-title">Не удалось загрузить данные</div>
             <div class="loader-text">${escapeHtml(error.message || error)}</div>
           </div>
@@ -1514,7 +1229,6 @@
 
       try {
         const res = await callServer("getDashboardData");
-
         if (!res || !res.ok) {
           throw new Error(res?.error || "Сервер вернул пустой ответ.");
         }
@@ -1533,12 +1247,9 @@
         }
 
         setStatus("ok", "Данные загружены");
-
         $("lastUpdate").textContent =
-          "Обновлено: " + new Date().toLocaleTimeString("ru-RU", {
-            hour: "2-digit",
-            minute: "2-digit",
-          });
+          "Обновлено: " +
+          new Date().toLocaleTimeString("ru-RU", { hour: "2-digit", minute: "2-digit" });
       } catch (error) {
         console.error(error);
         showError(error);
@@ -1558,7 +1269,6 @@
 
     function startSoloTimer() {
       stopSoloTimer();
-
       state.autoProgress = 0;
       updateAutoFill();
 
@@ -1598,7 +1308,6 @@
       if (!yearData) return [];
 
       const seen = new Set();
-
       yearData.employees.forEach(emp => {
         PRODUCTS.forEach(product => {
           const arr = emp.prod_f?.[product] || [];
@@ -1617,11 +1326,9 @@
       state.pickerOpen = true;
       $("periodPopup").classList.add("open");
       $("periodBtn").classList.add("active");
-
       state.pickerStart = state.period ? { ...state.period.start } : null;
       state.pickerEnd = state.period ? { ...state.period.end } : null;
       state.pickerStage = 0;
-
       buildPicker();
     }
 
@@ -1645,9 +1352,10 @@
           const available = availableMonthsForYear(year);
 
           const col = document.createElement("div");
-          col.className = "pp-ycol";
-
           const head = document.createElement("div");
+          const grid = document.createElement("div");
+
+          col.className = "pp-ycol";
           head.className = "pp-yhead";
           head.textContent = year;
           head.title = "Выбрать весь год";
@@ -1659,9 +1367,7 @@
             refreshPicker();
           });
 
-          const grid = document.createElement("div");
           grid.className = "pp-mgrid";
-
           for (let m = 0; m < 12; m++) {
             const btn = document.createElement("button");
             btn.type = "button";
@@ -1677,11 +1383,7 @@
             const btn = event.target.closest(".pp-mbtn");
             if (!btn || btn.disabled) return;
 
-            const point = {
-              y: Number(btn.dataset.y),
-              m: Number(btn.dataset.m),
-            };
-
+            const point = { y: Number(btn.dataset.y), m: Number(btn.dataset.m) };
             if (state.pickerStage === 0) {
               state.pickerStart = point;
               state.pickerEnd = null;
@@ -1693,7 +1395,6 @@
               } else {
                 state.pickerEnd = point;
               }
-
               state.pickerStage = 0;
             }
 
@@ -1713,11 +1414,7 @@
       const end = state.pickerEnd || state.pickerStart;
 
       document.querySelectorAll(".pp-mbtn").forEach(btn => {
-        const point = {
-          y: Number(btn.dataset.y),
-          m: Number(btn.dataset.m),
-        };
-
+        const point = { y: Number(btn.dataset.y), m: Number(btn.dataset.m) };
         btn.classList.remove("insel", "edge");
 
         if (!start || !end) return;
@@ -1726,10 +1423,7 @@
         const from = monthAbs(start);
         const to = monthAbs(end);
 
-        if (abs >= from && abs <= to) {
-          btn.classList.add("insel");
-        }
-
+        if (abs >= from && abs <= to) btn.classList.add("insel");
         if (
           (point.y === start.y && point.m === start.m) ||
           (state.pickerEnd && point.y === state.pickerEnd.y && point.m === state.pickerEnd.m)
@@ -1763,39 +1457,39 @@
       };
 
       state.preset = "custom";
-
       document.querySelectorAll("[data-period]").forEach(btn => btn.classList.remove("active"));
       $("periodBtn").classList.add("active");
       $("periodBtnLabel").textContent = formatPeriodLabel(state.period);
-
       closePicker();
       updatePeriodUI();
       render();
     }
 
     function toggleTheme() {
-      const isLight = !document.body.classList.contains("light");
-      document.body.classList.toggle("light", isLight);
-      $("themeBtn").textContent = isLight ? "☀️" : "🌙";
+      const isDark = !document.body.classList.contains("dark");
+      document.body.classList.toggle("dark", isDark);
+      $("themeBtn").textContent = isDark ? "☾" : "☀";
 
       try {
-        localStorage.setItem("dashboard_theme", isLight ? "light" : "dark");
-      } catch (e) {}
+        localStorage.setItem("dashboard_theme", isDark ? "dark" : "light");
+      } catch (error) {
+        console.error(error);
+      }
     }
 
     function restoreTheme() {
       try {
         const saved = localStorage.getItem("dashboard_theme");
         if (saved === "dark") {
-          document.body.classList.remove("light");
-          $("themeBtn").textContent = "🌙";
-        } else if (saved === "light") {
-          document.body.classList.add("light");
-          $("themeBtn").textContent = "☀️";
-        } else if (document.body.classList.contains("light")) {
-          $("themeBtn").textContent = "☀️";
+          document.body.classList.add("dark");
+          $("themeBtn").textContent = "☾";
+        } else {
+          document.body.classList.remove("dark");
+          $("themeBtn").textContent = "☀";
         }
-      } catch (e) {}
+      } catch (error) {
+        console.error(error);
+      }
     }
 
     function toggleFullscreen() {
@@ -1824,7 +1518,6 @@
       $("pickerResetBtn").addEventListener("click", resetPicker);
       $("pickerCancelBtn").addEventListener("click", closePicker);
       $("pickerApplyBtn").addEventListener("click", applyPicker);
-
       $("themeBtn").addEventListener("click", toggleTheme);
       $("refreshBtn").addEventListener("click", reload);
       $("fullscreenBtn").addEventListener("click", toggleFullscreen);
@@ -1834,7 +1527,6 @@
 
         const popup = $("periodPopup");
         const button = $("periodBtn");
-
         if (!popup.contains(event.target) && !button.contains(event.target)) {
           closePicker();
         }
@@ -1845,7 +1537,6 @@
       restoreTheme();
       bindEvents();
       reload();
-
       state.autoTimer = setInterval(reload, AUTO_REFRESH_MS);
     }
 

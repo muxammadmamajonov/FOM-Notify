@@ -39,6 +39,14 @@ function doGet() {
     );
 }
 
+function getWebAppUrl_() {
+  try {
+    return ScriptApp.getService().getUrl() || '';
+  } catch (err) {
+    return '';
+  }
+}
+
 function getDashboardData() {
   try {
     const lock = LockService.getScriptLock();
@@ -210,6 +218,7 @@ function buildDashboardData_(factSheet, employeeMap, ss) {
       employeeCount: Object.keys(employeeMap).length,
       generatedAt: new Date().toISOString(),
       timezone: APP_CONFIG.TIMEZONE,
+      webAppUrl: getWebAppUrl_(),
     },
   };
 }
@@ -362,6 +371,7 @@ function buildEmptyResponse_(ss, factSheet, employeeMap) {
       employeeCount: Object.keys(employeeMap).length,
       generatedAt: new Date().toISOString(),
       timezone: APP_CONFIG.TIMEZONE,
+      webAppUrl: getWebAppUrl_(),
     },
   };
 }
