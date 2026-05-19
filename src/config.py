@@ -9,25 +9,15 @@ ENV_FILE = Path(".env")
 
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 ADMIN_CHAT_ID = int(os.getenv("ADMIN_CHAT_ID")) if os.getenv("ADMIN_CHAT_ID") else None
+GROUP_CHAT_ID = int(os.getenv("GROUP_CHAT_ID")) if os.getenv("GROUP_CHAT_ID") else None
 TARGET_URL = os.getenv("TARGET_URL")
 WEB_APP_URL = os.getenv("WEB_APP_URL") or TARGET_URL
 TZ = os.getenv("TZ", "Asia/Tashkent")
 TIMEZONE = ZoneInfo(TZ)
 DB_PATH = os.getenv("DB_PATH", "data/subscribers.db")
-
-# Optional comma-separated list of initial subscriber chat IDs (e.g. -12345,-67890)
-INITIAL_SUBSCRIBERS_RAW = os.getenv("INITIAL_SUBSCRIBERS", "")
-if INITIAL_SUBSCRIBERS_RAW:
-    INITIAL_SUBSCRIBERS = [int(x.strip()) for x in INITIAL_SUBSCRIBERS_RAW.split(",") if x.strip()]
-else:
-    INITIAL_SUBSCRIBERS = []
-
-# Optional path to a JSON cookie export file (Playwright cookie format) to use for authenticated pages
-COOKIES_FILE = os.getenv("COOKIES_FILE", "")
-
-# Optional path to a persistent browser profile directory to reuse an existing signed-in profile.
-# Prefer copying a profile to a new folder to avoid concurrent access to your real browser profile.
-PLAYWRIGHT_USER_DATA_DIR = os.getenv("PLAYWRIGHT_USER_DATA_DIR", "")
+APPS_SCRIPT_AUTO_UPDATE = os.getenv("APPS_SCRIPT_AUTO_UPDATE", "0") == "1"
+CLASP_WORKDIR = os.getenv("CLASP_WORKDIR", ".")
+CLASP_DEPLOYMENT_ID = os.getenv("CLASP_DEPLOYMENT_ID", "").strip()
 
 RUN_ONCE = os.getenv("RUN_ONCE", "0") == "1"
 # Run Playwright headless by default. Set `HEADLESS=0` in .env to run headful.

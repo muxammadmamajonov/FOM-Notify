@@ -99,6 +99,11 @@
       min-height:100vh;
     }
 
+    body.capture-mode,
+    body.capture-mode .app{
+      min-height:0;
+    }
+
     button{
       font-family:inherit;
       -webkit-tap-highlight-color:transparent;
@@ -335,8 +340,12 @@
     }
 
     .stage{
-      flex:1;
+      flex:1 0 auto;
       padding:18px;
+    }
+
+    body.capture-mode .stage{
+      flex:0 0 auto;
     }
 
     .grid5{
@@ -364,9 +373,16 @@
       border:1px solid var(--border);
       border-radius:24px;
       padding:20px;
+      display:grid;
+      grid-template-rows:auto minmax(0,1fr);
+      height:100%;
       position:relative;
       overflow:hidden;
       box-shadow:var(--shadow);
+    }
+
+    .pod-card:not(.total){
+      min-height:320px;
     }
 
     .pod-card::before{
@@ -438,16 +454,26 @@
     .podium{
       display:grid;
       grid-template-columns:1fr 1.15fr 1fr;
-      align-items:end;
+      align-items:stretch;
+      align-content:end;
       gap:12px;
+      min-height:228px;
+      height:100%;
+    }
+
+    .pod-card.total .podium{
+      min-height:194px;
     }
 
     .place{
-      display:flex;
-      flex-direction:column;
-      align-items:center;
+      --pedestal-height:92px;
+      display:grid;
+      grid-template-rows:24px 58px 42px var(--pedestal-height);
+      align-content:end;
+      align-items:end;
       text-align:center;
       min-width:0;
+      height:100%;
     }
 
     .place-name{
@@ -456,24 +482,43 @@
       font-weight:800;
       line-height:1.18;
       margin-bottom:6px;
-      min-height:2.36em;
-      display:-webkit-box;
-      -webkit-line-clamp:2;
-      -webkit-box-orient:vertical;
-      overflow:hidden;
-      word-break:break-word;
-    }
-
-    .place-city{
-      max-width:100%;
-      font-size:12px;
-      color:var(--muted);
-      text-transform:uppercase;
-      letter-spacing:.06em;
-      margin-bottom:10px;
+      min-height:24px;
       white-space:nowrap;
       overflow:hidden;
       text-overflow:ellipsis;
+    }
+
+    .place-lines{
+      width:100%;
+      display:flex;
+      flex-direction:column;
+      justify-content:flex-start;
+      gap:4px;
+      margin-bottom:10px;
+      min-height:58px;
+      max-height:58px;
+      overflow:hidden;
+    }
+
+    .place-line{
+      max-width:100%;
+      font-size:12px;
+      color:var(--muted);
+      letter-spacing:.02em;
+      line-height:1.22;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+
+    .place-name{grid-row:1;}
+    .place-lines{grid-row:2;}
+    .place-val{grid-row:3;}
+    .pedestal{grid-row:4;}
+
+    .place-line.ellipsis{
+      font-weight:800;
+      letter-spacing:.08em;
     }
 
     .place-val{
@@ -482,6 +527,10 @@
       line-height:1;
       margin-bottom:10px;
       font-variant-numeric:tabular-nums;
+      min-height:42px;
+      display:flex;
+      align-items:flex-end;
+      justify-content:center;
     }
 
     .place-val .u{
@@ -505,9 +554,12 @@
       color:rgba(255,255,255,.92);
     }
 
-    .p1 .pedestal{height:120px;background:var(--gold);}
-    .p2 .pedestal{height:92px;background:var(--silv);}
-    .p3 .pedestal{height:74px;background:var(--bron);}
+    .p1{--pedestal-height:120px;}
+    .p2{--pedestal-height:92px;}
+    .p3{--pedestal-height:74px;}
+    .p1 .pedestal{height:var(--pedestal-height);background:var(--gold);}
+    .p2 .pedestal{height:var(--pedestal-height);background:var(--silv);}
+    .p3 .pedestal{height:var(--pedestal-height);background:var(--bron);}
 
     .p1 .place-val{color:var(--gold);}
     .p2 .place-val{color:var(--silv);}
@@ -834,6 +886,10 @@
         padding:16px;
       }
 
+      .pod-card:not(.total){
+        min-height:0;
+      }
+
       .pod-head{
         margin-bottom:16px;
       }
@@ -849,6 +905,9 @@
       .podium{
         grid-template-columns:1fr;
         gap:0;
+        min-height:0;
+        height:auto;
+        align-content:stretch;
       }
 
       .place{
@@ -858,7 +917,8 @@
           "name ped"
           "city ped"
           "val ped";
-        align-items:center;
+        grid-template-rows:auto auto auto;
+        align-items:end;
         text-align:left;
         gap:4px 14px;
         padding:12px 0;
@@ -874,12 +934,18 @@
         min-height:0;
         margin:0;
         font-size:16px;
-        -webkit-line-clamp:2;
+        white-space:nowrap;
       }
 
-      .place-city{
+      .place-lines{
         grid-area:city;
         margin:0;
+        min-height:0;
+        max-height:none;
+        overflow:visible;
+      }
+
+      .place-line{
         font-size:11px;
       }
 
@@ -887,6 +953,8 @@
         grid-area:val;
         margin:4px 0 0;
         font-size:28px;
+        min-height:0;
+        justify-content:flex-start;
       }
 
       .pedestal{
@@ -1015,17 +1083,17 @@
       <div class="brand">
         <div class="logo">🏆</div>
         <div class="brand-text">
-          <h1 class="ttl">TOP-3 Sales</h1>
-          <div class="subttl">Dashboard ? Production Edition</div>
+          <h1 class="ttl">ТОП-3 Продажи</h1>
+          <div class="subttl">Панель мониторинга — рабочая версия</div>
         </div>
       </div>
 
       <div class="hdr-right">
         <div class="segmented" data-control="period">
           <span class="segmented-label">Период</span>
-          <button class="segmented-btn active" data-period="month" type="button">Month</button>
-          <button class="segmented-btn" data-period="quarter" type="button">Quarter</button>
-          <button class="segmented-btn" data-period="year" type="button">Year</button>
+          <button class="segmented-btn active" data-period="month" type="button">Месяц</button>
+          <button class="segmented-btn" data-period="quarter" type="button">Квартал</button>
+          <button class="segmented-btn" data-period="year" type="button">Год</button>
         </div>
 
         <button class="period-btn" id="periodBtn" type="button">
@@ -1035,19 +1103,19 @@
             <line x1="8" y1="2" x2="8" y2="6"></line>
             <line x1="3" y1="10" x2="21" y2="10"></line>
           </svg>
-          <span id="periodBtnLabel">Custom period</span>
+          <span id="periodBtnLabel">Произвольный период</span>
           <span>▾</span>
         </button>
 
         <div class="segmented" data-control="mode">
           <span class="segmented-label">Вид</span>
-          <button class="segmented-btn active" data-mode="grid" type="button">Grid</button>
-          <button class="segmented-btn" data-mode="solo" type="button">Carousel</button>
+          <button class="segmented-btn active" data-mode="grid" type="button">Сетка</button>
+          <button class="segmented-btn" data-mode="solo" type="button">Карусель</button>
         </div>
 
         <div class="status">
           <span class="dot ok" id="statusDot"></span>
-          <span id="statusText">Loading...</span>
+          <span id="statusText">Загрузка...</span>
         </div>
 
         <div class="icon-actions">
@@ -1083,20 +1151,20 @@
       <div class="nodata" id="loader">
         <div class="loader-card">
           <div class="loader-spinner"></div>
-          <div class="loader-title">Connecting to Google Sheets...</div>
-          <div class="loader-text">Dashboard initialization and data loading.</div>
+          <div class="loader-title">Подключение к Google Таблицам...</div>
+          <div class="loader-text">Инициализация панели и загрузка данных.</div>
         </div>
       </div>
     </main>
 
     <footer class="ticker">
       <div class="ticker-left">
-        <span class="period-tag" id="periodLabel">Current month</span>
-        <span><span class="big" id="totalTp">?</span> ТП</span>
-        <span><span class="big" id="totalSales">?</span> продаж</span>
+        <span class="period-tag" id="periodLabel">Текущий месяц</span>
+        <span><span class="big" id="totalTp">-</span> сотрудников</span>
+        <span><span class="big" id="totalSales">-</span> продаж</span>
       </div>
       <div class="ticker-right">
-        <span id="lastUpdate">?</span>
+        <span id="lastUpdate">-</span>
       </div>
     </footer>
   </div>
@@ -1105,13 +1173,31 @@
 
   <script>
     (() => {
-      const tg = window.Telegram?.WebApp;
+      const tg = (window.Telegram && window.Telegram.WebApp) || null;
 
       if (tg) {
-        tg.ready();
+        const requestTelegramFullscreen = () => {
+          try { tg.ready(); } catch (e) {}
+          try { tg.expand(); } catch (e) {}
+          try { if (tg.disableVerticalSwipes) tg.disableVerticalSwipes(); } catch (e) {}
+          try { if (tg.requestFullscreen) tg.requestFullscreen(); } catch (e) {}
+        };
 
-        try { tg.expand(); } catch(e) {}
-        try { tg.requestFullscreen?.(); } catch(e) {}
+        requestTelegramFullscreen();
+        setTimeout(requestTelegramFullscreen, 300);
+        setTimeout(requestTelegramFullscreen, 1200);
+
+        try {
+          if (tg.onEvent) {
+            tg.onEvent("viewportChanged", requestTelegramFullscreen);
+          }
+        } catch (e) {}
+
+        document.addEventListener("visibilitychange", () => {
+          if (!document.hidden) {
+            requestTelegramFullscreen();
+          }
+        });
 
         if (tg.colorScheme === "light") {
           document.body.classList.add("light");
@@ -1119,7 +1205,7 @@
 
         document.documentElement.style.setProperty(
           "--tg-safe-bottom",
-          (tg.safeAreaInset?.bottom || 0) + "px"
+          ((tg.safeAreaInset && tg.safeAreaInset.bottom) || 0) + "px"
         );
       } else {
         document.body.classList.add("light");
@@ -1128,33 +1214,34 @@
   </script>
 
   <script>
-    const PRODUCTS = ['AA', 'FA', 'FK', 'FS'];
-    const DISPLAY_ORDER = ['ALL', ...PRODUCTS];
+    const PRODUCTS = ["AA", "FA", "FK", "FS"];
+    const DISPLAY_ORDER = ["ALL", ...PRODUCTS];
 
     const AUTO_REFRESH_MS = 30 * 60 * 1000;
     const SOLO_INTERVAL_MS = 8000;
-    const MAX_TIE_PREVIEW = 2;
+    const MAX_TIE_PREVIEW = 5;
+    const REQUEST_TIMEOUT_MS = 25000;
 
-    const MONTH_SHORT = ['Янв','Фев','Мар','Апр','Май','Июн','Июл','Авг','Сен','Окт','Ноя','Дек'];
+    const MONTH_SHORT = ["янв","фев","мар","апр","май","июн","июл","авг","сен","окт","ноя","дек"];
     const MONTH_LONG = [
-      'Январь','Февраль','Март','Апрель','Май','Июнь',
-      'Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'
+      "январь","февраль","март","апрель","май","июнь",
+      "июль","август","сентябрь","октябрь","ноябрь","декабрь"
     ];
 
     const PRODUCT_TITLES = {
-      ALL: 'ОБЩИЕ ПРОДАЖИ',
-      AA: 'Продукт AA',
-      FA: 'Продукт FA',
-      FK: 'Продукт FK',
-      FS: 'Продукт FS',
+      ALL: "ИТОГОВЫЕ ПРОДАЖИ",
+      AA: "ArzonApteka",
+      FA: "F-Apteka",
+      FK: "F-Kassa",
+      FS: "F-Summary",
     };
 
     const state = {
       rawData: null,
       years: [],
       period: null,
-      preset: 'month',
-      mode: 'grid',
+      preset: "month",
+      mode: "grid",
       soloIdx: 0,
       soloTimer: null,
       autoTimer: null,
@@ -1164,35 +1251,56 @@
       pickerStart: null,
       pickerEnd: null,
       pickerStage: 0,
+      isReloading: false,
+      consecutiveFailures: 0,
     };
 
     const $ = id => document.getElementById(id);
 
     function setStatus(type, text) {
-      $('statusDot').className = 'dot ' + type;
-      $('statusText').textContent = text;
+      $("statusDot").className = "dot " + type;
+      $("statusText").textContent = text;
     }
 
     function escapeHtml(value) {
-      return String(value Staff '').replace(/[&<>"']/g, c => ({
-        '&':'&amp;',
-        '<':'&lt;',
-        '>':'&gt;',
-        '"':'&quot;',
-        "'":'&#39;'
-      }[c]));
+      return String(value == null ? "" : value).replace(/[&<>"']/g, function (c) {
+        return {
+          "&": "&amp;",
+          "<": "&lt;",
+          ">": "&gt;",
+          '"': "&quot;",
+          "'": "&#39;"
+        }[c];
+      });
     }
 
     function callServer(functionName, ...args) {
       return new Promise((resolve, reject) => {
-        if (!window.google?.script?.run) {
-          reject(new Error('google.script.run недоступен. Откройте страницу через Web App URL /exec.'));
+        if (!(window.google && window.google.script && window.google.script.run)) {
+          reject(new Error("google.script.run недоступен. Откройте это через Apps Script /exec URL."));
           return;
         }
 
+        let done = false;
+        const timer = setTimeout(() => {
+          if (done) return;
+          done = true;
+          reject(new Error("Истекло время запроса."));
+        }, REQUEST_TIMEOUT_MS);
+
         google.script.run
-          .withSuccessHandler(resolve)
-          .withFailureHandler(err => reject(new Error(err?.message || String(err))))
+          .withSuccessHandler(res => {
+            if (done) return;
+            done = true;
+            clearTimeout(timer);
+            resolve(res);
+          })
+          .withFailureHandler(err => {
+            if (done) return;
+            done = true;
+            clearTimeout(timer);
+            reject(new Error((err && err.message) || String(err)));
+          })
           [functionName](...args);
       });
     }
@@ -1202,18 +1310,18 @@
     }
 
     function formatPeriodLabel(period) {
-      if (!period) return '—';
+      if (!period) return "-";
 
       if (period.start.y === period.end.y && period.start.m === period.end.m) {
-        return MONTH_LONG[period.start.m] + ' ' + period.start.y;
+        return MONTH_LONG[period.start.m] + " " + period.start.y;
       }
 
       if (period.start.y === period.end.y) {
-        return MONTH_SHORT[period.start.m] + '–' + MONTH_SHORT[period.end.m] + ' ' + period.start.y;
+        return MONTH_SHORT[period.start.m] + "-" + MONTH_SHORT[period.end.m] + " " + period.start.y;
       }
 
-      return MONTH_SHORT[period.start.m] + ' ' + period.start.y + ' — ' +
-             MONTH_SHORT[period.end.m] + ' ' + period.end.y;
+      return MONTH_SHORT[period.start.m] + " " + period.start.y + " - " +
+             MONTH_SHORT[period.end.m] + " " + period.end.y;
     }
 
     function setPeriodPreset(preset) {
@@ -1226,54 +1334,40 @@
         if (!state.rawData[y]) y = maxYear;
       }
 
-      if (preset === 'month') {
-        state.period = {
-          kind: 'month',
-          start: { y, m },
-          end: { y, m },
-        };
+      if (preset === "month") {
+        state.period = { kind: "month", start: { y, m }, end: { y, m } };
       }
 
-      if (preset === 'quarter') {
+      if (preset === "quarter") {
         const qStart = Math.floor(m / 3) * 3;
-        state.period = {
-          kind: 'quarter',
-          start: { y, m: qStart },
-          end: { y, m: qStart + 2 },
-        };
+        state.period = { kind: "quarter", start: { y, m: qStart }, end: { y, m: qStart + 2 } };
       }
 
-      if (preset === 'year') {
-        state.period = {
-          kind: 'year',
-          start: { y, m: 0 },
-          end: { y, m: 11 },
-        };
+      if (preset === "year") {
+        state.period = { kind: "year", start: { y, m: 0 }, end: { y, m: 11 } };
       }
 
       state.preset = preset;
 
-      document.querySelectorAll('[data-period]').forEach(btn => {
-        btn.classList.toggle('active', btn.dataset.period === preset);
+      document.querySelectorAll("[data-period]").forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.period === preset);
       });
 
-      $('periodBtn').classList.remove('active');
-      $('periodBtnLabel').textContent = 'Свой период';
+      $("periodBtn").classList.remove("active");
+      $("periodBtnLabel").textContent = "Произвольный период";
 
       updatePeriodUI();
       render();
     }
 
     function updatePeriodUI() {
-      $('periodLabel').textContent = formatPeriodLabel(state.period);
+      $("periodLabel").textContent = formatPeriodLabel(state.period);
     }
 
     function forEachPeriodMonth(callback) {
       if (!state.period) return;
-
       const from = monthAbs(state.period.start);
       const to = monthAbs(state.period.end);
-
       for (let abs = from; abs <= to; abs++) {
         const y = Math.floor(abs / 12);
         const m = abs - y * 12;
@@ -1283,7 +1377,6 @@
 
     function getRanking(product) {
       if (!state.rawData || !state.period) return [];
-
       const agg = {};
 
       forEachPeriodMonth((y, m) => {
@@ -1291,14 +1384,15 @@
         if (!yearData) return;
 
         yearData.employees.forEach(emp => {
+          // skip region header rows if they somehow ended up in employees
+          if (emp && emp.name && /^R\d+\s*[:\-]?\s*$/i.test(emp.name)) return;
           let add = 0;
-
-          if (product === 'ALL') {
+          if (product === "ALL") {
             PRODUCTS.forEach(p => {
-              add += emp.prod_f?.[p]?.[m] || 0;
+              add += (((emp.prod_f && emp.prod_f[p]) ? emp.prod_f[p][m] : 0) || 0);
             });
           } else {
-            add += emp.prod_f?.[product]?.[m] || 0;
+            add += (((emp.prod_f && emp.prod_f[product]) ? emp.prod_f[product][m] : 0) || 0);
           }
 
           if (add <= 0) return;
@@ -1306,8 +1400,8 @@
           if (!agg[emp.name]) {
             agg[emp.name] = {
               name: emp.name,
-              city: emp.city || '',
-              region: emp.region || '',
+              city: emp.city || "",
+              region: emp.region || "",
               value: 0,
             };
           }
@@ -1327,13 +1421,7 @@
         if (row.value !== lastValue) {
           const rank = result.length + 1;
           if (rank > 3) break;
-
-          result.push({
-            rank,
-            value: row.value,
-            entries: [row],
-          });
-
+          result.push({ rank, value: row.value, entries: [row] });
           lastValue = row.value;
         } else if (result.length) {
           result[result.length - 1].entries.push(row);
@@ -1341,11 +1429,7 @@
       }
 
       while (result.length < 3) {
-        result.push({
-          rank: result.length + 1,
-          value: 0,
-          entries: [],
-        });
+        result.push({ rank: result.length + 1, value: 0, entries: [] });
       }
 
       return result.slice(0, 3);
@@ -1355,11 +1439,10 @@
       const ranking = getRanking(product);
       const top3 = getTop3(ranking);
       const total = ranking.reduce((sum, row) => sum + row.value, 0);
-
       const places = [top3[1], top3[0], top3[2]];
 
       return `
-        <section class="pod-card ${product === 'ALL' ? 'total' : ''}" style="--prod-color:var(--p-${product})">
+        <section class="pod-card ${product === "ALL" ? "total" : ""}" style="--prod-color:var(--p-${product})">
           <div class="pod-head">
             <div class="pod-title">
               <div class="pod-badge">${product}</div>
@@ -1367,13 +1450,13 @@
             </div>
 
             <div class="pod-sum">
-              <div class="pod-sum-lbl">ВСЕГО</div>
+              <div class="pod-sum-lbl">Итого</div>
               <div class="pod-sum-val">${total}</div>
             </div>
           </div>
 
           <div class="podium">
-            ${places.map(place => buildPlace(place)).join('')}
+            ${places.map(place => buildPlace(place)).join("")}
           </div>
         </section>
       `;
@@ -1381,13 +1464,14 @@
 
     function buildPlace(place) {
       if (!place || !place.entries.length) {
-        const rank = place?.rank || 0;
-
+        const rank = (place && place.rank) || 0;
         return `
           <div class="place p${rank} empty-place">
-            <div class="place-name">? no data ?</div>
-            <div class="place-city">empty</div>
-            <div class="place-val">0<span class="u">pcs</span></div>
+            <div class="place-name">- нет данных -</div>
+            <div class="place-lines">
+              <div class="place-line">empty</div>
+            </div>
+            <div class="place-val">0<span class="u">шт</span></div>
             <div class="pedestal"><div class="rank-num">${rank}</div></div>
           </div>
         `;
@@ -1395,62 +1479,59 @@
 
       const visible = place.entries.slice(0, MAX_TIE_PREVIEW);
       const hasMore = place.entries.length > MAX_TIE_PREVIEW;
-
-      const names = visible.map(e => escapeHtml(e.name)).join(' / ') + (hasMore ? ' / ...' : '');
-      const cities = visible.map(e => escapeHtml(e.city || e.region || '?')).join(' / ') + (hasMore ? ' / ...' : '');
-
+      const allLinesText = place.entries.map(e => formatPlaceLineText(e)).join("\n");
+      const visibleLines = visible.map(e => formatPlaceLineText(e));
+      const firstLine = visibleLines[0] || "-";
+      const previewLines = visibleLines
+        .slice(1)
+        .map(line => `<div class="place-line">${escapeHtml(line)}</div>`)
+        .join("");
+      const ellipsisLine = hasMore ? `<div class="place-line ellipsis">...</div>` : "";
       return `
         <div class="place p${place.rank}">
-          <div class="place-name" title="${names}">${names}</div>
-          <div class="place-city" title="${cities}">${cities}</div>
-          <div class="place-val">${place.value}<span class="u">pcs</span></div>
+          <div class="place-name" title="${escapeHtml(allLinesText)}">${escapeHtml(firstLine)}</div>
+          <div class="place-lines" title="${escapeHtml(allLinesText)}">${previewLines}${ellipsisLine}</div>
+          <div class="place-val">${place.value}<span class="u">шт.</span></div>
           <div class="pedestal"><div class="rank-num">${place.rank}</div></div>
         </div>
       `;
     }
 
+    function formatPlaceLineText(entry) {
+      const region = entry.region || entry.city || "-";
+      return `${entry.name} \u2022 ${region}`;
+    }
+
     function render() {
       if (!state.rawData) return;
-
       stopSoloTimer();
       updatePeriodUI();
 
-      const allRanking = getRanking('ALL');
+      const allRanking = getRanking("ALL");
       const totalEmployees = new Set(allRanking.map(row => row.name));
       const totalSales = allRanking.reduce((sum, row) => sum + row.value, 0);
 
-      $('totalTp').textContent = totalEmployees.size;
-      $('totalSales').textContent = totalSales;
+      $("totalTp").textContent = totalEmployees.size;
+      $("totalSales").textContent = totalSales;
 
-      if (state.mode === 'solo') {
-        $('autoBar').classList.add('on');
+      if (state.mode === "solo") {
+        $("autoBar").classList.add("on");
         const product = DISPLAY_ORDER[state.soloIdx] || DISPLAY_ORDER[0];
-
-        $('stage').innerHTML = `
-          <div class="solo">
-            ${buildCard(product)}
-          </div>
-        `;
-
+        $("stage").innerHTML = `<div class="solo">${buildCard(product)}</div>`;
         startSoloTimer();
         return;
       }
 
-      $('autoBar').classList.remove('on');
-      $('stage').innerHTML = `
-        <div class="grid5">
-          ${DISPLAY_ORDER.map(buildCard).join('')}
-        </div>
-      `;
+      $("autoBar").classList.remove("on");
+      $("stage").innerHTML = `<div class="grid5">${DISPLAY_ORDER.map(buildCard).join("")}</div>`;
     }
 
     function showError(error) {
-      setStatus('er', 'Ошибка');
-
-      $('stage').innerHTML = `
+      setStatus("er", "Ошибка");
+      $("stage").innerHTML = `
         <div class="nodata">
           <div class="loader-card">
-            <div style="font-size:44px;margin-bottom:14px">⚠️</div>
+            <div style="font-size:44px;margin-bottom:14px">!</div>
             <div class="loader-title">Не удалось загрузить данные</div>
             <div class="loader-text">${escapeHtml(error.message || error)}</div>
           </div>
@@ -1459,56 +1540,77 @@
     }
 
     async function reload() {
-      setStatus('ld', 'Загрузка…');
+      if (state.isReloading) return;
+      state.isReloading = true;
+      setStatus("ld", "Загрузка...");
 
       try {
-        const res = await callServer('getDashboardData');
-
+        const res = await callServer("getDashboardData");
         if (!res || !res.ok) {
-          throw new Error(res?.error || 'Сервер вернул пустой ответ.');
+          throw new Error((res && res.error) || "Сервер вернул пустой ответ.");
         }
 
         state.rawData = res.data || {};
+        // client-side fallback: if backend returned a regionMap (from R1/R2... -> name),
+        // replace any city/region tokens that are still in R# form.
+        state.regionMap = (res.meta && res.meta.regionMap) || {};
+
+        if (state.regionMap && Object.keys(state.regionMap).length) {
+          Object.keys(state.rawData).forEach(function (yr) {
+            const yearData = state.rawData[yr] || {};
+            const emps = Array.isArray(yearData.employees) ? yearData.employees : [];
+
+            emps.forEach(function (emp) {
+              if (emp.city && /^R\d+$/i.test(emp.city)) {
+                const mapped = state.regionMap[emp.city.toUpperCase()];
+                if (mapped) emp.city = mapped;
+              }
+
+              if (emp.region && /^R\d+$/i.test(emp.region)) {
+                const mapped = state.regionMap[emp.region.toUpperCase()];
+                if (mapped) emp.region = mapped;
+              }
+            });
+          });
+        }
         state.years = Array.isArray(res.years) ? res.years : Object.keys(state.rawData).map(Number);
 
         if (!state.years.length) {
-          throw new Error('Нет данных для отображения.');
+          throw new Error("Данные для отображения отсутствуют.");
         }
 
         if (!state.period) {
-          setPeriodPreset('month');
+          setPeriodPreset("month");
         } else {
           render();
         }
 
-        setStatus('ok', 'Данные загружены');
-
-        $('lastUpdate').textContent =
-          'Обновлено: ' + new Date().toLocaleTimeString('ru-RU', {
-            hour: '2-digit',
-            minute: '2-digit',
-          });
-
+        state.consecutiveFailures = 0;
+        setStatus("ok", "Данные загружены");
+        $("lastUpdate").textContent = "Обновлено: " + new Date().toLocaleTimeString("ru-RU", {
+          hour: "2-digit",
+          minute: "2-digit",
+        });
       } catch (error) {
+        state.consecutiveFailures += 1;
         console.error(error);
         showError(error);
+      } finally {
+        state.isReloading = false;
       }
     }
 
     function setMode(mode) {
       state.mode = mode;
       state.soloIdx = 0;
-
-      document.querySelectorAll('[data-mode]').forEach(btn => {
-        btn.classList.toggle('active', btn.dataset.mode === mode);
+      document.querySelectorAll("[data-mode]").forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.mode === mode);
       });
-
       render();
     }
 
     function startSoloTimer() {
       stopSoloTimer();
-
       state.autoProgress = 0;
       updateAutoFill();
 
@@ -1529,29 +1631,26 @@
         clearTimeout(state.soloTimer);
         state.soloTimer = null;
       }
-
       if (state.autoProgressTimer) {
         clearInterval(state.autoProgressTimer);
         state.autoProgressTimer = null;
       }
-
       state.autoProgress = 0;
       updateAutoFill();
     }
 
     function updateAutoFill() {
-      $('autoFill').style.width = state.autoProgress + '%';
+      $("autoFill").style.width = state.autoProgress + "%";
     }
 
     function availableMonthsForYear(year) {
-      const yearData = state.rawData?.[String(year)];
+      const yearData = state.rawData ? state.rawData[String(year)] : null;
       if (!yearData) return [];
 
       const seen = new Set();
-
       yearData.employees.forEach(emp => {
         PRODUCTS.forEach(product => {
-          const arr = emp.prod_f?.[product] || [];
+          const arr = (emp.prod_f && emp.prod_f[product]) ? emp.prod_f[product] : [];
           for (let m = 0; m < 12; m++) {
             if ((arr[m] || 0) > 0) seen.add(m);
           }
@@ -1563,97 +1662,84 @@
 
     function openPicker() {
       if (!state.rawData) return;
-
       state.pickerOpen = true;
-      $('periodPopup').classList.add('open');
-      $('periodBtn').classList.add('active');
+      $("periodPopup").classList.add("open");
+      $("periodBtn").classList.add("active");
 
-      state.pickerStart = state.period ? { ...state.period.start } : null;
-      state.pickerEnd = state.period ? { ...state.period.end } : null;
+      state.pickerStart = state.period ? { y: state.period.start.y, m: state.period.start.m } : null;
+      state.pickerEnd = state.period ? { y: state.period.end.y, m: state.period.end.m } : null;
       state.pickerStage = 0;
-
       buildPicker();
     }
 
     function closePicker() {
       state.pickerOpen = false;
-      $('periodPopup').classList.remove('open');
-
-      if (state.preset !== 'custom') {
-        $('periodBtn').classList.remove('active');
+      $("periodPopup").classList.remove("open");
+      if (state.preset !== "custom") {
+        $("periodBtn").classList.remove("active");
       }
     }
 
     function buildPicker() {
-      const container = $('ppYears');
-      container.innerHTML = '';
+      const container = $("ppYears");
+      container.innerHTML = "";
 
-      state.years
-        .slice()
-        .sort((a, b) => b - a)
-        .forEach(year => {
-          const available = availableMonthsForYear(year);
+      state.years.slice().sort((a, b) => b - a).forEach(year => {
+        const available = availableMonthsForYear(year);
+        const col = document.createElement("div");
+        col.className = "pp-ycol";
 
-          const col = document.createElement('div');
-          col.className = 'pp-ycol';
-
-          const head = document.createElement('div');
-          head.className = 'pp-yhead';
-          head.textContent = year;
-          head.title = 'Выбрать весь год';
-          head.addEventListener('click', () => {
-            if (!available.length) return;
-            state.pickerStart = { y: year, m: available[0] };
-            state.pickerEnd = { y: year, m: available[available.length - 1] };
-            state.pickerStage = 0;
-            refreshPicker();
-          });
-
-          const grid = document.createElement('div');
-          grid.className = 'pp-mgrid';
-
-          for (let m = 0; m < 12; m++) {
-            const btn = document.createElement('button');
-            btn.type = 'button';
-            btn.className = 'pp-mbtn';
-            btn.textContent = MONTH_SHORT[m];
-            btn.dataset.y = String(year);
-            btn.dataset.m = String(m);
-            btn.disabled = !available.includes(m);
-            grid.appendChild(btn);
-          }
-
-          grid.addEventListener('click', event => {
-            const btn = event.target.closest('.pp-mbtn');
-            if (!btn || btn.disabled) return;
-
-            const point = {
-              y: Number(btn.dataset.y),
-              m: Number(btn.dataset.m),
-            };
-
-            if (state.pickerStage === 0) {
-              state.pickerStart = point;
-              state.pickerEnd = null;
-              state.pickerStage = 1;
-            } else {
-              if (monthAbs(point) < monthAbs(state.pickerStart)) {
-                state.pickerEnd = state.pickerStart;
-                state.pickerStart = point;
-              } else {
-                state.pickerEnd = point;
-              }
-
-              state.pickerStage = 0;
-            }
-
-            refreshPicker();
-          });
-
-          col.appendChild(head);
-          col.appendChild(grid);
-          container.appendChild(col);
+        const head = document.createElement("div");
+        head.className = "pp-yhead";
+        head.textContent = String(year);
+        head.title = "Выбрать весь год";
+        head.addEventListener("click", () => {
+          if (!available.length) return;
+          state.pickerStart = { y: year, m: available[0] };
+          state.pickerEnd = { y: year, m: available[available.length - 1] };
+          state.pickerStage = 0;
+          refreshPicker();
         });
+
+        const grid = document.createElement("div");
+        grid.className = "pp-mgrid";
+
+        for (let m = 0; m < 12; m++) {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "pp-mbtn";
+          btn.textContent = MONTH_SHORT[m];
+          btn.dataset.y = String(year);
+          btn.dataset.m = String(m);
+          btn.disabled = !available.includes(m);
+          grid.appendChild(btn);
+        }
+
+        grid.addEventListener("click", event => {
+          const btn = event.target.closest(".pp-mbtn");
+          if (!btn || btn.disabled) return;
+
+          const point = { y: Number(btn.dataset.y), m: Number(btn.dataset.m) };
+          if (state.pickerStage === 0) {
+            state.pickerStart = point;
+            state.pickerEnd = null;
+            state.pickerStage = 1;
+          } else {
+            if (monthAbs(point) < monthAbs(state.pickerStart)) {
+              state.pickerEnd = state.pickerStart;
+              state.pickerStart = point;
+            } else {
+              state.pickerEnd = point;
+            }
+            state.pickerStage = 0;
+          }
+          refreshPicker();
+        });
+
+        col.appendChild(head);
+        col.appendChild(grid);
+        container.appendChild(col);
+      });
 
       refreshPicker();
     }
@@ -1662,13 +1748,9 @@
       const start = state.pickerStart;
       const end = state.pickerEnd || state.pickerStart;
 
-      document.querySelectorAll('.pp-mbtn').forEach(btn => {
-        const point = {
-          y: Number(btn.dataset.y),
-          m: Number(btn.dataset.m),
-        };
-
-        btn.classList.remove('insel', 'edge');
+      document.querySelectorAll(".pp-mbtn").forEach(btn => {
+        const point = { y: Number(btn.dataset.y), m: Number(btn.dataset.m) };
+        btn.classList.remove("insel", "edge");
 
         if (!start || !end) return;
 
@@ -1676,21 +1758,19 @@
         const from = monthAbs(start);
         const to = monthAbs(end);
 
-        if (abs >= from && abs <= to) {
-          btn.classList.add('insel');
-        }
+        if (abs >= from && abs <= to) btn.classList.add("insel");
 
         if (
           (point.y === start.y && point.m === start.m) ||
           (state.pickerEnd && point.y === state.pickerEnd.y && point.m === state.pickerEnd.m)
         ) {
-          btn.classList.add('edge');
+          btn.classList.add("edge");
         }
       });
 
-      $('ppHint').textContent = state.pickerStage === 1
-        ? 'Теперь выберите конец периода'
-        : (state.pickerStart ? 'Диапазон выбран — нажмите Применить' : 'Выберите начало периода');
+      $("ppHint").textContent = state.pickerStage === 1
+        ? "Выберите конец периода"
+        : (state.pickerStart ? "Диапазон выбран - нажмите Применить" : "Выберите начало периода");
     }
 
     function resetPicker() {
@@ -1707,16 +1787,15 @@
       }
 
       state.period = {
-        kind: 'custom',
+        kind: "custom",
         start: { ...state.pickerStart },
         end: { ...(state.pickerEnd || state.pickerStart) },
       };
 
-      state.preset = 'custom';
-
-      document.querySelectorAll('[data-period]').forEach(btn => btn.classList.remove('active'));
-      $('periodBtn').classList.add('active');
-      $('periodBtnLabel').textContent = formatPeriodLabel(state.period);
+      state.preset = "custom";
+      document.querySelectorAll("[data-period]").forEach(btn => btn.classList.remove("active"));
+      $("periodBtn").classList.add("active");
+      $("periodBtnLabel").textContent = formatPeriodLabel(state.period);
 
       closePicker();
       updatePeriodUI();
@@ -1724,67 +1803,64 @@
     }
 
     function toggleTheme() {
-      const isLight = !document.body.classList.contains('light');
-      document.body.classList.toggle('light', isLight);
-      $('themeBtn').textContent = isLight ? '☀️' : '🌙';
-
+      const isLight = !document.body.classList.contains("light");
+      document.body.classList.toggle("light", isLight);
+      $("themeBtn").textContent = isLight ? "L" : "D";
       try {
-        localStorage.setItem('dashboard_theme', isLight ? 'light' : 'dark');
-      } catch(e) {}
+        localStorage.setItem("dashboard_theme", isLight ? "light" : "dark");
+      } catch (e) {}
     }
 
     function restoreTheme() {
       try {
-        const saved = localStorage.getItem('dashboard_theme');
-        if (saved === 'dark') {
-          document.body.classList.remove('light');
-          $('themeBtn').textContent = '🌙';
-        } else if (saved === 'light') {
-          document.body.classList.add('light');
-          $('themeBtn').textContent = '☀️';
-        } else if (document.body.classList.contains('light')) {
-          $('themeBtn').textContent = '☀️';
+        const saved = localStorage.getItem("dashboard_theme");
+        if (saved === "dark") {
+          document.body.classList.remove("light");
+          $("themeBtn").textContent = "D";
+        } else if (saved === "light") {
+          document.body.classList.add("light");
+          $("themeBtn").textContent = "L";
+        } else if (document.body.classList.contains("light")) {
+          $("themeBtn").textContent = "L";
         }
-      } catch(e) {}
+      } catch (e) {}
     }
 
     function toggleFullscreen() {
       if (!document.fullscreenElement) {
-        document.documentElement.requestFullscreen?.().catch(() => {});
+        if (document.documentElement.requestFullscreen) { document.documentElement.requestFullscreen().catch(() => {}); }
       } else {
-        document.exitFullscreen?.().catch(() => {});
+        if (document.exitFullscreen) { document.exitFullscreen().catch(() => {}); }
       }
     }
 
     function bindEvents() {
-      document.querySelectorAll('[data-period]').forEach(btn => {
-        btn.addEventListener('click', () => setPeriodPreset(btn.dataset.period));
+      document.querySelectorAll("[data-period]").forEach(btn => {
+        btn.addEventListener("click", () => setPeriodPreset(btn.dataset.period));
       });
 
-      document.querySelectorAll('[data-mode]').forEach(btn => {
-        btn.addEventListener('click', () => setMode(btn.dataset.mode));
+      document.querySelectorAll("[data-mode]").forEach(btn => {
+        btn.addEventListener("click", () => setMode(btn.dataset.mode));
       });
 
-      $('periodBtn').addEventListener('click', event => {
+      $("periodBtn").addEventListener("click", event => {
         event.stopPropagation();
         if (state.pickerOpen) closePicker();
         else openPicker();
       });
 
-      $('pickerResetBtn').addEventListener('click', resetPicker);
-      $('pickerCancelBtn').addEventListener('click', closePicker);
-      $('pickerApplyBtn').addEventListener('click', applyPicker);
+      $("pickerResetBtn").addEventListener("click", resetPicker);
+      $("pickerCancelBtn").addEventListener("click", closePicker);
+      $("pickerApplyBtn").addEventListener("click", applyPicker);
 
-      $('themeBtn').addEventListener('click', toggleTheme);
-      $('refreshBtn').addEventListener('click', reload);
-      $('fullscreenBtn').addEventListener('click', toggleFullscreen);
+      $("themeBtn").addEventListener("click", toggleTheme);
+      $("refreshBtn").addEventListener("click", reload);
+      $("fullscreenBtn").addEventListener("click", toggleFullscreen);
 
-      document.addEventListener('mousedown', event => {
+      document.addEventListener("mousedown", event => {
         if (!state.pickerOpen) return;
-
-        const popup = $('periodPopup');
-        const button = $('periodBtn');
-
+        const popup = $("periodPopup");
+        const button = $("periodBtn");
         if (!popup.contains(event.target) && !button.contains(event.target)) {
           closePicker();
         }
@@ -1795,12 +1871,9 @@
       restoreTheme();
       bindEvents();
       reload();
-
       state.autoTimer = setInterval(reload, AUTO_REFRESH_MS);
     }
 
     boot();
   </script>
-
-
 </body></html>

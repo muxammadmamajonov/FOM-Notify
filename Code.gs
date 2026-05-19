@@ -218,7 +218,8 @@ function buildDashboardData_(factSheet, employeeMap, ss) {
       employeeCount: Object.keys(employeeMap).length,
       generatedAt: new Date().toISOString(),
       timezone: APP_CONFIG.TIMEZONE,
-      webAppUrl: getWebAppUrl_(),
+        webAppUrl: getWebAppUrl_(),
+        regionMap: employeeMap.__regions || {},
     },
   };
 }
@@ -229,7 +230,8 @@ function readEmployeeMap_(sheet) {
     .getValues();
 
   const map = {};
-  const skip = /^(R\d:|ИТОГО|Вакант|$)/i;
+  const regionMap = {}; // e.g. { R1: 'Toshkent' }
+  const skip = /^(ИТОГО|Вакант|$)/i;
 
   for (let r = 1; r < values.length; r++) {
     const row = values[r];
@@ -238,7 +240,32 @@ function readEmployeeMap_(sheet) {
       continue;
     }
 
-    const name = normalizeText_(row[APP_CONFIG.EMP_COL_NAME]);
+    const rawName = normalizeText_(row[APP_CONFIG.EMP_COL_NAME]);
+    if (!rawName) {
+      continue;
+    }
+
+    // Detect region header rows like "R1:" or "R1: RegionName"
+    const regionHeaderMatch = rawName.match(/^R(\d+)\s*[:\-]?\s*(.*)$/i);
+
+    if (regionHeaderMatch) {
+      const code = ('R' + regionHeaderMatch[1]).toUpperCase();
+      // Region name may be present inline after the code, or in the city/region columns
+      const inline = regionHeaderMatch[2] ? regionHeaderMatch[2].trim() : '';
+      const cityCell = normalizeText_(row[APP_CONFIG.EMP_COL_CITY]);
+      const regionCell = normalizeText_(row[APP_CONFIG.EMP_COL_REGION]);
+      const regionName = inline || cityCell || regionCell || '';
+
+      if (regionName) {
+        regionMap[code] = regionName;
+      }
+
+      // skip adding as an actual employee
+      continue;
+    }
+
+    // Normal employee rows
+    const name = rawName;
     if (!name || skip.test(name)) {
       continue;
     }
@@ -248,6 +275,23 @@ function readEmployeeMap_(sheet) {
       region: normalizeText_(row[APP_CONFIG.EMP_COL_REGION]),
     };
   }
+
+  // Replace any city/region codes like "R1" with the resolved region name from regionMap
+  Object.keys(map).forEach(function (nm) {
+    const entry = map[nm];
+    if (entry.city && /^R\d+$/i.test(entry.city)) {
+      const resolved = regionMap[entry.city.toUpperCase()];
+      if (resolved) entry.city = resolved;
+    }
+
+    if (entry.region && /^R\d+$/i.test(entry.region)) {
+      const resolved = regionMap[entry.region.toUpperCase()];
+      if (resolved) entry.region = resolved;
+    }
+  });
+
+  // expose region map for frontend diagnostics / fallback
+  map.__regions = regionMap;
 
   return map;
 }
@@ -333,10 +377,15 @@ function parseDateHeader_(value) {
 function createEmployee_(name, info) {
   return {
     name: name,
-    city: info.city || '',
-    region: info.region || '',
+    city: normalizeLocationValue_(info.city),
+    region: normalizeLocationValue_(info.region),
     prod_f: {},
   };
+}
+
+function normalizeLocationValue_(value) {
+  const text = normalizeText_(value);
+  return text || '';
 }
 
 function createEmptyMonths_() {
@@ -372,6 +421,7 @@ function buildEmptyResponse_(ss, factSheet, employeeMap) {
       generatedAt: new Date().toISOString(),
       timezone: APP_CONFIG.TIMEZONE,
       webAppUrl: getWebAppUrl_(),
+      regionMap: (employeeMap && employeeMap.__regions) || {},
     },
   };
 }
@@ -450,7 +500,8 @@ function isValidEmployeeName_(name) {
     return false;
   }
 
-  if (/^(R\d:|Вакант|$)/i.test(name)) {
+  // Exclude region header tokens like R1, R2, R10, with optional trailing ':' or '-'
+  if (/^(R\d+\s*[:\-]?\s*|Вакант)$/i.test(name)) {
     return false;
   }
 
