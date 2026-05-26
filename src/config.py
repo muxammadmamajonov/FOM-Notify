@@ -81,6 +81,14 @@ class _ScreenshotOneAccount:
     label: str
 
 
+# Opt-in signing. ScreenshotOne accounts have a "Require signed requests"
+# toggle in the dashboard. When that toggle is OFF (the default for new
+# accounts), sending a signature causes `signature_is_not_valid` errors
+# because no active signing secret exists. Only enable this if you flipped
+# the dashboard toggle to ON.
+SCREENSHOTONE_SIGN_REQUESTS = os.getenv("SCREENSHOTONE_SIGN_REQUESTS", "0") == "1"
+
+
 def _load_screenshotone_accounts() -> list[_ScreenshotOneAccount]:
     accounts: list[_ScreenshotOneAccount] = []
     for idx in (1, 2, 3, 4):
@@ -89,6 +97,10 @@ def _load_screenshotone_accounts() -> list[_ScreenshotOneAccount]:
         secret = (os.getenv(f"SCREENSHOTONE_SECRET_KEY{suffix}") or "").strip()
         if not access:
             continue
+        # Drop the secret unless signing is explicitly opted in. The
+        # downstream code signs iff secret_key is truthy.
+        if not SCREENSHOTONE_SIGN_REQUESTS:
+            secret = ""
         accounts.append(
             _ScreenshotOneAccount(
                 access_key=access,
