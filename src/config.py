@@ -8,7 +8,10 @@ from zoneinfo import ZoneInfo
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 
 ENV_FILE = PROJECT_ROOT / ".env"
-load_dotenv(ENV_FILE)
+# override=True so values in .env win over the shell. Important on shared
+# hosts (e.g. AlwaysData) where TZ is preset to ":/etc/localtime" — a Unix
+# `tzset` convention that ZoneInfo cannot parse.
+load_dotenv(ENV_FILE, override=True)
 
 SCREENSHOTS_DIR = PROJECT_ROOT / "screenshots"
 DATA_DIR = PROJECT_ROOT / "data"
@@ -18,7 +21,24 @@ ADMIN_CHAT_ID = int(os.getenv("ADMIN_CHAT_ID")) if os.getenv("ADMIN_CHAT_ID") el
 GROUP_CHAT_ID = int(os.getenv("GROUP_CHAT_ID")) if os.getenv("GROUP_CHAT_ID") else None
 TARGET_URL = os.getenv("TARGET_URL")
 WEB_APP_URL = os.getenv("WEB_APP_URL") or TARGET_URL
-TZ = os.getenv("TZ", "Asia/Tashkent")
+def _resolve_tz(raw: str | None) -> str:
+    """Coerce a TZ env value into something ZoneInfo can load.
+
+    Unix `tzset(3)` understands forms like ":/etc/localtime" (leading colon
+    means "treat the rest as a TZif file path"), but Python's `zoneinfo`
+    only accepts IANA names like "Asia/Tashkent". Strip the colon prefix,
+    fall back to the default if what's left is empty or an absolute path.
+    """
+    default = "Asia/Tashkent"
+    value = (raw or "").strip()
+    if value.startswith(":"):
+        value = value[1:]
+    if not value or value.startswith("/"):
+        return default
+    return value
+
+
+TZ = _resolve_tz(os.getenv("TZ"))
 TIMEZONE = ZoneInfo(TZ)
 
 # DB path: honour DB_PATH if set (relative or absolute), otherwise default
