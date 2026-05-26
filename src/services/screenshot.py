@@ -60,7 +60,12 @@ DEFAULT_PARAMS: dict[str, str] = {
 
 # HTTP statuses that indicate "this account is done, try the next one" rather
 # than a permanent problem with the request or the target page.
-RETRYABLE_STATUSES = {402, 403, 408, 429, 500, 502, 503, 504}
+#
+# 400 is here too: ScreenshotOne uses 400 for both "request invalid for the
+# whole world" (rare — we control the params) and account-specific errors
+# like `signature_is_not_valid` or `unknown_access_key`, which a different
+# account might not hit. Trying the next account costs one extra HTTP call.
+RETRYABLE_STATUSES = {400, 402, 403, 408, 429, 500, 502, 503, 504}
 
 
 @dataclass(frozen=True)
