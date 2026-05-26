@@ -55,6 +55,49 @@ CLASP_WORKDIR = os.getenv("CLASP_WORKDIR", str(PROJECT_ROOT))
 CLASP_DEPLOYMENT_ID = os.getenv("CLASP_DEPLOYMENT_ID", "").strip()
 
 RUN_ONCE = os.getenv("RUN_ONCE", "0") == "1"
-# Run Playwright headless by default. Set `HEADLESS=0` in .env to run headful.
+# Legacy Playwright flag — kept for backwards-compat with existing .env files.
+# The current backend is ScreenshotOne; HEADLESS is unused.
 _headless_raw = os.getenv("HEADLESS", "1").lower()
 HEADLESS = _headless_raw in ("1", "true", "yes")
+
+
+# ---------------------------------------------------------------------------
+# ScreenshotOne accounts (1..4 numbered pairs). Loop in order on failover.
+#
+# .env layout:
+#   SCREENSHOTONE_ACCESS_KEY=primary
+#   SCREENSHOTONE_SECRET_KEY=primary_secret
+#   SCREENSHOTONE_ACCESS_KEY_2=backup
+#   SCREENSHOTONE_SECRET_KEY_2=backup_secret
+#   ... (up to _4)
+# ---------------------------------------------------------------------------
+from dataclasses import dataclass  # noqa: E402  (kept near consumers for clarity)
+
+
+@dataclass(frozen=True)
+class _ScreenshotOneAccount:
+    access_key: str
+    secret_key: str
+    label: str
+
+
+def _load_screenshotone_accounts() -> list[_ScreenshotOneAccount]:
+    accounts: list[_ScreenshotOneAccount] = []
+    for idx in (1, 2, 3, 4):
+        suffix = "" if idx == 1 else f"_{idx}"
+        access = (os.getenv(f"SCREENSHOTONE_ACCESS_KEY{suffix}") or "").strip()
+        secret = (os.getenv(f"SCREENSHOTONE_SECRET_KEY{suffix}") or "").strip()
+        if not access:
+            continue
+        accounts.append(
+            _ScreenshotOneAccount(
+                access_key=access,
+                secret_key=secret,
+                label=f"account{idx}",
+            )
+        )
+    return accounts
+
+
+# Imported by src/services/screenshot.py. Order = failover priority.
+SCREENSHOTONE_ACCOUNTS = _load_screenshotone_accounts()
