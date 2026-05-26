@@ -43,15 +43,19 @@ DEFAULT_PARAMS: dict[str, str] = {
     "viewport_width": "1920",
     "viewport_height": "1080",
     "full_page": "true",
-    "wait_until": "networkidle",
+    # ScreenshotOne wait_until vocabulary: load | domcontentloaded |
+    # networkidle0 (no in-flight requests for 500 ms) | networkidle2
+    # (≤2 in-flight requests for 500 ms). Apps Script keeps polling the
+    # Sheets backend, so networkidle2 is the realistic upper bound;
+    # networkidle0 may never trigger.
+    "wait_until": "networkidle2",
+    # Extra wall-clock wait after wait_until fires, in seconds. Gives the
+    # chart libs a beat to finish painting.
     "delay": "4",
     "block_ads": "true",
     "block_cookie_banners": "true",
     "block_trackers": "true",
-    "block_chats": "true",
-    "image_quality": "85",
     "cache": "false",
-    "response_type": "by_format",
 }
 
 # HTTP statuses that indicate "this account is done, try the next one" rather
