@@ -3,7 +3,7 @@ import datetime
 
 from src.config import TIMEZONE
 from src.services import reporting
-from src.services.screenshot import CapturedSection
+from src.services.screenshot import CapturedSection, DashboardProbe, _build_dashboard_error
 
 
 class FakeBot:
@@ -38,53 +38,14 @@ def test_build_section_caption():
     )
 
 
-def test_send_report_single_full_image_attaches_button_and_cleans_up(tmp_path, monkeypatch):
-    """Current backend (ScreenshotOne) returns one FULL image per send."""
-
+def test_send_report_sends_all_images_and_deletes_screenshots(tmp_path, monkeypatch):
     async def run():
         bot = FakeBot()
-        screenshots_dir = tmp_path / "screenshots"
-        screenshots_dir.mkdir()
-        monkeypatch.setattr(reporting, "SCREENSHOTS_DIR", screenshots_dir)
-
-        path = screenshots_dir / "01-full.png"
-        path.write_bytes(b"fake-png")
-        images = [
-            CapturedSection(
-                product_code="FULL",
-                title="FULL SCREENSHOT",
-                slug="full-screenshot",
-                path=path,
-            )
-        ]
-
-        result = await reporting.send_report(bot, -100123, images)
-        expected_caption = reporting.build_report_caption()
-
-        assert len(bot.calls) == 1
-        assert bot.calls[0]["chat_id"] == -100123
-        assert bot.calls[0]["caption"] == expected_caption
-        # The first (and only) message gets the "Dashboardni ochish" button.
-        assert bot.calls[0]["reply_markup"] is not None
-        assert len(result["sent"]) == 1
-        assert result["failed"] == []
-        assert len(result["deleted"]) == 1
-        assert result["cleanup_failed"] == []
-        assert not path.exists()
-
-    asyncio.run(run())
-
-
-def test_send_report_still_handles_multi_image_payload(tmp_path, monkeypatch):
-    """Reporting layer remains generic in case we re-enable per-card capture."""
-
-    async def run():
-        bot = FakeBot()
-        screenshots_dir = tmp_path / "screenshots"
-        screenshots_dir.mkdir()
-        monkeypatch.setattr(reporting, "SCREENSHOTS_DIR", screenshots_dir)
-
         images = []
+        screenshots_dir = tmp_path / "screenshots"
+        screenshots_dir.mkdir()
+        monkeypatch.setattr(reporting, "SCREENSHOTS_DIR", screenshots_dir)
+
         for index, (code, title) in enumerate(
             [
                 ("FULL", "FULL SCREENSHOT"),
@@ -107,13 +68,56 @@ def test_send_report_still_handles_multi_image_payload(tmp_path, monkeypatch):
             )
 
         result = await reporting.send_report(bot, -100123, images)
+        expected_caption = reporting.build_report_caption()
 
         assert len(bot.calls) == 5
-        # Only the first message carries the inline button.
+        assert bot.calls[0]["chat_id"] == -100123
+        assert bot.calls[0]["caption"] == expected_caption
         assert bot.calls[0]["reply_markup"] is not None
-        assert bot.calls[1]["reply_markup"] is None
         assert bot.calls[1]["caption"] == "ArzonApteka bo'yicha top 3ta o'rin."
+        assert bot.calls[1]["reply_markup"] is None
         assert len(result["sent"]) == 5
         assert result["failed"] == []
+        assert len(result["deleted"]) == 5
+        assert result["cleanup_failed"] == []
+        assert result["caption"] == expected_caption
+        assert not any(image.path.exists() for image in images)
 
     asyncio.run(run())
+
+
+def test_build_dashboard_error_for_access_denied():
+    probe = DashboardProbe(
+        page_title="Access denied",
+        body_text="You do not have permission to access this page.",
+        loader_title="",
+        loader_text="",
+        loader_visible=False,
+        app_present=False,
+        card_count=0,
+    )
+
+    error = _build_dashboard_error(probe)
+    assert error is not None
+    assert error == (
+        "Dashboard access denied. "
+        "Check the Apps Script deployment access and confirm the /exec URL is publicly reachable."
+    )
+
+
+def test_build_dashboard_error_for_stuck_loader():
+    probe = DashboardProbe(
+        page_title="",
+        body_text="",
+        loader_title="Connecting to Google Sheets...",
+        loader_text="Dashboard initialization and data loading.",
+        loader_visible=True,
+        app_present=True,
+        card_count=0,
+    )
+
+    error = _build_dashboard_error(probe, timeout_ms=45000)
+    assert error == (
+        "Dashboard did not finish loading after waiting 45000ms. "
+        "Last page state: Connecting to Google Sheets... | Dashboard initialization and data loading."
+    )
