@@ -24,7 +24,7 @@ async def main():
     if not TELEGRAM_BOT_TOKEN:
         raise RuntimeError("TELEGRAM_BOT_TOKEN is not set in environment")
 
-    bot = Bot(TELEGRAM_BOT_TOKEN)
+    bot = Bot(token=TELEGRAM_BOT_TOKEN)
     dp = Dispatcher()
 
     dp.include_router(start_router)

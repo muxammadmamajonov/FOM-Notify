@@ -3,8 +3,7 @@ from aiogram.types import Message, BotCommand
 from aiogram.filters import Command
 
 from ..services import reporting, screenshot
-from ..config import TARGET_URL, TIMEZONE
-from pathlib import Path
+from ..config import SCREENSHOTS_DIR, TARGET_URL, TIMEZONE
 import datetime
 
 router = Router()
@@ -28,42 +27,26 @@ async def cmd_start(message: Message):
 @router.message(Command("report"))
 async def cmd_report(message: Message):
     chat_id = message.chat.id
-    stamp = datetime.datetime.now(TIMEZONE).strftime("%Y%m%d-%H%M%S")
+    if not TARGET_URL:
+        await message.reply("TARGET_URL is not configured.")
+        return
+
+    now = datetime.datetime.now(TIMEZONE)
+    stamp = now.strftime("%Y%m%d-%H%M%S")
     base_name = f"manual-{stamp}"
     try:
-        if not TARGET_URL:
-            await message.reply("TARGET_URL is not configured.")
-            return
-
-        images = await screenshot.capture_sections(TARGET_URL, Path("screenshots"), base_name)
+        images = await screenshot.capture_sections(TARGET_URL, SCREENSHOTS_DIR, base_name)
     except Exception as e:
         await message.reply(f"Capture failed: {e}")
         return
 
-    result = await reporting.send_report(message.bot, chat_id, images)
-    success_count = len(result["sent"])
-    failed_count = len(result["failed"])
+    result = await reporting.send_report(message.bot, chat_id, images, now=now)
 
-    if failed_count:
+    if result["failed"]:
         failure_lines = "\n".join(
             f"{item['title']}: {item['error']}" for item in result["failed"][:5]
         )
-        await message.reply(
-            f"Report delivery finished.\n"
-            f"Chat: {chat_id}\n"
-            f"Images: {len(images)}\n"
-            f"Sent: {success_count}\n"
-            f"Failed: {failed_count}\n"
-            f"{failure_lines}"
-        )
-        return
-
-    await message.reply(
-        f"Report sent successfully.\n"
-        f"Images: {len(images)}\n"
-        f"Sent: {success_count}\n"
-        f"Link: {result['url'] or 'not set'}"
-    )
+        await message.reply(f"Report delivery failed:\n{failure_lines}")
 
 
 @router.message(Command("stop"))

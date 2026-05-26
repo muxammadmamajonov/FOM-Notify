@@ -6,3 +6,12 @@ __pycache__/
 screenshots/
 data/
 .vscode/
+.pytest_cache/
+.mypy_cache/
+
+# Local-only Claude Code settings (per-developer). The shared `.claude/settings.json`
+# is still committed if present.
+.claude/settings.local.json
+
+# AlwaysData / systemd local overrides
+*.local

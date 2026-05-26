@@ -1,0 +1,17 @@
+# Normalize all text files to LF in the repo. Working tree on Windows still
+# checks out as CRLF (Git's default), but the repo no longer accumulates
+# CRLF↔LF diff noise when collaborators are on different platforms.
+* text=auto eol=lf
+
+# Keep PowerShell scripts as CRLF on disk (PowerShell prefers it).
+*.ps1 text eol=crlf
+
+# Binary file types that must never be touched by EOL conversion.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdf binary
+*.zip binary
+*.db binary

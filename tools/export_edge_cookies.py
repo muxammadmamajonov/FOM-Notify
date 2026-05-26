@@ -1,8 +1,21 @@
 #!/usr/bin/env python3
 """Export cookies from a copied Edge/Chrome profile into Playwright cookie JSON.
 
+WINDOWS-ONLY: this script decrypts the browser cookie store via the Windows
+DPAPI (`crypt32!CryptUnprotectData`). It cannot run on Linux/macOS — the
+encryption keys are not portable.
+
 Usage: python tools/export_edge_cookies.py --profile data/edge_profile --hosts script.google.com --out data/cookies.json
 """
+import sys
+
+if sys.platform != "win32":
+    sys.stderr.write(
+        "export_edge_cookies.py runs only on Windows (DPAPI is Windows-only). "
+        "Exiting.\n"
+    )
+    raise SystemExit(2)
+
 import argparse
 import base64
 import json

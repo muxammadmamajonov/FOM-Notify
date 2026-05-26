@@ -5,7 +5,7 @@ from urllib.parse import urlparse, parse_qsl, urlencode, urlunparse
 from aiogram import Bot
 from aiogram.types import FSInputFile, InlineKeyboardButton, InlineKeyboardMarkup
 
-from ..config import ENV_FILE, TARGET_URL, TIMEZONE, WEB_APP_URL
+from ..config import ENV_FILE, SCREENSHOTS_DIR, TARGET_URL, TIMEZONE, WEB_APP_URL
 from .screenshot import CapturedSection
 
 
@@ -23,9 +23,6 @@ UZBEK_MONTHS = (
     "noyabr",
     "dekabr",
 )
-
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
-SCREENSHOTS_DIR = PROJECT_ROOT / "screenshots"
 
 SECTION_LABELS = {
     "AA": "ArzonApteka",
@@ -113,14 +110,24 @@ def delete_sent_screenshot(path: Path) -> bool:
         return False
 
 
-async def send_report(bot: Bot, chat_id: int, images: list[CapturedSection], now: datetime.datetime | None = None) -> dict:
+async def send_report(
+    bot: Bot,
+    chat_id: int,
+    images: list[CapturedSection],
+    now: datetime.datetime | None = None,
+    link_date: datetime.datetime | None = None,
+) -> dict:
+    """`now` controls the caption date; `link_date` controls the dashboard button URL
+    (defaults to `now` when omitted). Pass `link_date` separately to make the button
+    open a different date than the one shown in the caption."""
     url = sync_web_app_url_env()
 
     caption = build_report_caption(now=now)
 
+    effective_link_date = link_date if link_date is not None else now
     url_with_date = url
-    if url and now is not None:
-        date_str = now.astimezone(TIMEZONE).strftime("%Y-%m-%d")
+    if url and effective_link_date is not None:
+        date_str = effective_link_date.astimezone(TIMEZONE).strftime("%Y-%m-%d")
         parsed = urlparse(url)
         q = dict(parse_qsl(parsed.query))
         q.update({"date": date_str})

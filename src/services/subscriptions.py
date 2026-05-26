@@ -20,7 +20,7 @@ async def add_subscriber(db_path: str, chat_id: int):
     async with aiosqlite.connect(db_path) as db:
         await db.execute(
             "INSERT OR IGNORE INTO subscribers (chat_id, created_at) VALUES (?, ?)",
-            (chat_id, datetime.datetime.utcnow().isoformat()),
+            (chat_id, datetime.datetime.now(datetime.timezone.utc).isoformat()),
         )
         await db.commit()
 
